@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "857100187175",
+    "firebase_url": "https://emocation-5d81b.firebaseio.com",
+    "project_id": "emocation-5d81b",
+    "storage_bucket": "emocation-5d81b.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:857100187175:android:944f2ffccf15bf9f",
+        "android_client_info": {
+          "package_name": "com.example.user.emocation"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "857100187175-5maljcmtkok9jds6h2gr4repab7nuf8v.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.user.emocation",
+            "certificate_hash": "952b8a3bfba135ee3b8f2aec26c1786c1558d2be"
+          }
+        },
+        {
+          "client_id": "857100187175-vgp1gt6cp5kpnrli3erjqrvcttt2e5gn.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAFjwSTsTxyR8t2wOpYlWG_BG2_-_evQ6Q"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "857100187175-vgp1gt6cp5kpnrli3erjqrvcttt2e5gn.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
