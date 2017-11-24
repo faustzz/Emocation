@@ -19,24 +19,19 @@ import android.widget.Toast;
 import com.example.user.emocation.EmotionAPI_Info.EmotionInfo;
 import com.example.user.emocation.RetrofitService.APIService;
 import com.example.user.emocation.RetrofitService.ApiUtils;
+import com.example.user.emocation.RetrofitService.RetrofitClient;
 
 import java.io.IOException;
 import java.net.URI;
+import java.util.List;
 
-import okhttp3.Call;
-import okhttp3.MediaType;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.RequestBody;
-import okhttp3.Response;
+import retrofit2.Call;
 
 /**
  * Created by user on 2017-11-24.
  */
 
 public class Exam extends AppCompatActivity {
-    public static final MediaType JSON = MediaType.parse("application/json");
-    OkHttpClient client = new OkHttpClient();
     private APIService apiService;
     private TextView textView;
     EmotionInfo emotionInfo;
@@ -44,14 +39,14 @@ public class Exam extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_emotionapi_exam);
-        Uri uri = Uri.parse("https://thenypost.files.wordpress.com/2014/02/trump.jpg");
 
-        try {
-            String response = post();
-            textView.setText(response);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        textView = (TextView)findViewById(R.id.textView);
+        Uri uri = Uri.parse("https://thenypost.files.wordpress.com/2014/02/trump.jpg");
+        APIService apiService = APIService.retrofit.create(APIService.class);
+        Call<EmotionInfo> call = apiService.createEmotionInfo();
+
+        textView.setText(call.toString());
+
 
 
         findViewById(R.id.button_gallery).setOnClickListener(new View.OnClickListener() {
@@ -63,23 +58,6 @@ public class Exam extends AppCompatActivity {
             }
         });
 
-        textView = (TextView)findViewById(R.id.textView);
-
-    }
-
-    public String post() throws IOException {
-        Request request = new Request.Builder()
-                .url("https://westus.api.cognitive.microsoft.com/emotion/v1.0/recognize/")
-                .header("Content-Type", "application/json")
-                .header("Ocp-Apim-Subscription-Key","9070f1ed33494504aaf4a6918ed21a64")
-                .build();
-        Response response = null;
-        try {
-            response = client.newCall(request).execute();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return response.body().string();
     }
 
 

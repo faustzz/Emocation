@@ -16,22 +16,12 @@ public class RetrofitClient {
     private static Retrofit retrofit = null;
 
     public static Retrofit getClient(String baseUrl) throws IOException {
-        OkHttpClient client = new OkHttpClient.Builder()
-                .build();
-        Request request = new Request.Builder()
-                .url(baseUrl)
-                .header("Content-Type", "application/json")
-                .header("Ocp-Apim-Subscription-Key","9070f1ed33494504aaf4a6918ed21a64")
-                .build();
-
-        Response response = client.newCall(request).execute();
-        response.body().close();
-//        if(retrofit == null){
-//            retrofit = new Retrofit.Builder()
-//                    .baseUrl(baseUrl)
-//                    .addConverterFactory(GsonConverterFactory.create())
-//                    .build();
-//        }
+        if(retrofit == null){
+            retrofit = new Retrofit.Builder()
+                    .baseUrl(baseUrl)
+                    .addConverterFactory(GsonConverterFactory.create())
+                    .build();
+        }
         return retrofit;
     }
 }
