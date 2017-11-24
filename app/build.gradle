@@ -10,6 +10,7 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+
     }
     buildTypes {
         release {
@@ -26,9 +27,6 @@ dependencies {
     })
 
     /////////////////retrofit 사용을 위한 라이브러리 추가///////////////////
-    compile 'com.google.code.gson:gson:2.7'
-    compile 'com.squareup.retrofit2:retrofit:2.1.0'
-    compile 'com.squareup.retrofit2:converter-gson:2.1.0'
     ////////////////////////////////////////////////////////////////////////
 
 
@@ -40,6 +38,13 @@ dependencies {
     ////파이어베이스 인증과 구글 로그인 연동을 위한 선언
     compile 'com.google.android.gms:play-services-auth:10.0.1'
     compile 'com.google.firebase:firebase-database:10.0.1'
+
+    compile 'com.squareup.okhttp3:okhttp:3.2.0'
+
+
+    compile 'com.squareup.retrofit2:converter-gson:2.1.0'
+    compile 'com.google.code.gson:gson:2.8.2'
+    compile 'com.squareup.retrofit2:retrofit:2.3.0'
 
     testCompile 'junit:junit:4.12'
 }
