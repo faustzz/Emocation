@@ -1,26 +1,29 @@
 package com.example.user.emocation;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
-import android.graphics.Bitmap;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Environment;
-import android.provider.MediaStore;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
+
 
 public class MainActivity extends AppCompatActivity {
     private ImageButton galleryButton, cameraButton, searchButton;
+    private Activity mainActivity = this;
     final int PICK_FROM_ALBUM = 1000;
     private Uri mCaptureUri;
     String baseImageUrl= "http://codingexplained.com/wp-content/uploads/2015/11/Screen-Shot-2015-11-18-at-21.45.22.png";
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -33,15 +36,24 @@ public class MainActivity extends AppCompatActivity {
         galleryButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //////갤러리에 새 폴더 생성////////
-                String emo_album_path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM) + "/emocation";
-                File emocation = new File(emo_album_path);
-                if(!emocation.exists()) {
-                    emocation.mkdir();
+
+                int writePermissionCheck = ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE);
+                int readPermissionCheck = ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.READ_EXTERNAL_STORAGE);
+                if(writePermissionCheck == PackageManager.PERMISSION_DENIED || readPermissionCheck == PackageManager.PERMISSION_DENIED){
+                    ActivityCompat.requestPermissions(mainActivity, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},1);
+//                    File emocation = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM) + "/emocation");
+//                    if(!emocation.exists())
+//                        emocation.mkdir();
+//                    Intent intent = new Intent(getApplicationContext(), Exam.class);
+//                    startActivity(intent);
+                }else{
+                    File emocation = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM) + "/emocation");
+                    if(!emocation.exists()) {
+                        emocation.mkdir();
+                    }
+                    Intent intent = new Intent(getApplicationContext(), Exam.class);
+                    startActivity(intent);
                 }
-                //////////////////////////////////////
-                Intent intent = new Intent(getApplicationContext(), Exam.class);
-                startActivity(intent);
             }
         });
 
@@ -53,6 +65,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
+
 
 //    @Override
 //    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
