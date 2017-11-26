@@ -7,6 +7,7 @@ import android.graphics.Bitmap;
 import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -25,6 +26,7 @@ import com.pixelcan.emotionanalysisapi.models.Scores;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URISyntaxException;
 
 /**
@@ -63,50 +65,24 @@ public class Exam extends AppCompatActivity {
                 //이미지 데이터를 비트맵으로 받아온다.
                 Bitmap image_bitmap = null;
 
+//                try {
+//                    ExifInterface exif = new ExifInterface(data.getData().getPath() + "/" + name_Str);
+//                    showExif(exif);
+//                } catch (IOException e) {
+//                    e.printStackTrace();
+//                }
                 try {
                     image_bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), data.getData());
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-                String image_string = BitMapToString(image_bitmap); //bitmap to string
 
-                try {
-                    ExifInterface exif = new ExifInterface(name_Str);
-                    showExif(exif);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-
-                EmotionRestClient.init(getApplicationContext(),"e3b473b9304343649dfa8afdb1d12f06");
-                EmotionRestClient.getInstance().detect(image_bitmap, new ResponseCallback() {
-                    @Override
-                    public void onError(String errorMessage) {
-
-                    }
-
-                    @Override
-                    public void onSuccess(FaceAnalysis[] response) {
-                        FaceAnalysis[] faceAnalysis = response;
-                        faceRectangle = faceAnalysis[0].getFaceRectangle();
-                        scores = faceAnalysis[0].getScores();
-                    }
-                });
-
-
-                findViewById(R.id.button_gallery).setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        Intent intent = new Intent(Intent.ACTION_PICK);
-                        intent.setType(MediaStore.Images.Media.CONTENT_TYPE);
-                        startActivityForResult(intent, 1000);
-                    }
-                });
+                exiF(data, name_Str);
+                retro(image_bitmap);
 
                 ImageView image = (ImageView)findViewById(R.id.imageView);
 
                 //배치해놓은 ImageView에 set
-                textView.setText("faceRectangle : " + faceRectangle.toString() +"\n scores : " + scores.toString() +
-                        "\n image_GPS_LONG : " + gps_longtitude + "\n image_GPS_LA : " + gps_latitude) ;
                 image.setImageBitmap(image_bitmap);
             }
         }
@@ -146,5 +122,52 @@ public class Exam extends AppCompatActivity {
         String imgName = imgPath.substring(imgPath.lastIndexOf("/")+1);
 
         return imgName;
+    }
+    public void retro(Bitmap bitmap){
+        EmotionRestClient.init(getApplicationContext(),"e3b473b9304343649dfa8afdb1d12f06");
+        EmotionRestClient.getInstance().detect(bitmap, new ResponseCallback() {
+            @Override
+            public void onError(String errorMessage) {
+
+            }
+
+            @Override
+            public void onSuccess(FaceAnalysis[] response) {
+                FaceAnalysis[] faceAnalysis = response;
+                faceRectangle = faceAnalysis[0].getFaceRectangle();
+                scores = faceAnalysis[0].getScores();
+                faceRectangle = faceAnalysis[0].getFaceRectangle();
+                scores = faceAnalysis[0].getScores();
+                textView.setText(" anger : " + scores.getAnger() +
+                        " \n contempt : " + scores.getContempt() +
+                        " \n disgust : " + scores.getDisgust() +
+                        " \n fear : " + scores.getFear() +
+                        " \n happiness : " + scores.getHappiness() +
+                        " \n neutral : " + scores.getNeutral() +
+                        " \n sadness : " + scores.getSadness() +
+                        " \n surprise : " + scores.getSurprise() +
+                        "\n image_GPS_LONG : " + gps_longtitude +
+                        "\n image_GPS_LA : " + gps_latitude) ;
+            }
+        });
+    }
+    public String getPath(Uri uri) { //이미지 파일 경로 구하기
+        String[] projection = {MediaStore.Images.Media.DATA};
+        Cursor cursor = managedQuery(uri, projection, null, null, null);
+        startManagingCursor(cursor);
+        int columnIndex = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+        cursor.moveToFirst();
+        return cursor.getString(columnIndex);
+    }
+    public void exiF(Intent data, String name_Str){
+        String str = getPath(data.getData());
+        ExifInterface exif = null;
+        try {
+            exif = new ExifInterface(str);
+            showExif(exif);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
     }
 }
