@@ -40,7 +40,7 @@ public class MainActivity extends AppCompatActivity {
                     emocation.mkdir();
                 }
                 //////////////////////////////////////
-                Intent intent = new Intent(getApplicationContext(), Storage.class);
+                Intent intent = new Intent(getApplicationContext(), Exam.class);
                 startActivity(intent);
             }
         });

@@ -7,7 +7,6 @@ import android.graphics.Bitmap;
 import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -26,7 +25,6 @@ import com.pixelcan.emotionanalysisapi.models.Scores;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URISyntaxException;
 
 /**
@@ -106,8 +104,8 @@ public class Exam extends AppCompatActivity {
 
     private void selectFromGallery(){
         Intent intent = new Intent(Intent.ACTION_PICK);
-        intent.setType(android.provider.MediaStore.Images.Media.CONTENT_TYPE);
-        intent.setData(android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        intent.setType(MediaStore.Images.Media.CONTENT_TYPE);
+        intent.setData(MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         startActivityForResult(intent,1000);
     }
     public String getImageNameToUri(Uri data)
@@ -128,7 +126,10 @@ public class Exam extends AppCompatActivity {
         EmotionRestClient.getInstance().detect(bitmap, new ResponseCallback() {
             @Override
             public void onError(String errorMessage) {
-
+                Toast.makeText(getApplicationContext(),"실패",Toast.LENGTH_SHORT).show();
+                textView.setText(
+                        "\n image_GPS_LONG : " + gps_longtitude +
+                                "\n image_GPS_LA : " + gps_latitude) ;
             }
 
             @Override
@@ -150,6 +151,7 @@ public class Exam extends AppCompatActivity {
                         "\n image_GPS_LA : " + gps_latitude) ;
             }
         });
+
     }
     public String getPath(Uri uri) { //이미지 파일 경로 구하기
         String[] projection = {MediaStore.Images.Media.DATA};
