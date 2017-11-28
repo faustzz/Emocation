@@ -4,12 +4,12 @@ package com.example.user.emocation.ImageAlgorithm;
  * Created by caucse on 2017-11-28.
  */
 public class Emotion{
-	double anger;
-	double fear;
-	double happiness;
-	double neutral;
-	double sadness;
-	double surprise;
+	public double anger;
+	public double fear;
+	public double happiness;
+	public double neutral;
+	public 	double sadness;
+	public 	double surprise;
 
 	public Emotion(double a, double f,double h,double n,double sad,double sur) {
 		this.anger=a;

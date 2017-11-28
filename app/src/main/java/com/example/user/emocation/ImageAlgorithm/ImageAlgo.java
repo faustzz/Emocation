@@ -18,7 +18,7 @@ import java.util.Arrays;
 public class ImageAlgo {
     TextView textView;
     Bitmap bitmap;
-    Emotion emotion;
+    public Emotion emotion;
 
     public ImageAlgo(){
 
@@ -28,7 +28,13 @@ public class ImageAlgo {
         this.bitmap = bitmap;
     }
 
-
+    public ImageAlgo(ImageStat status, Emotion emotion) {
+        this.emotion = emotion;
+        AdjByMainColor(status.getMainColors());
+        AdjByContrast(status.getContrast(status.getHisto(0)));
+        AdjBySaturation(status.getSaturation());
+        AdjByTemperature(status.getTemp());
+    }
 
 
     public ImageStat analysis(){
@@ -102,11 +108,5 @@ public class ImageAlgo {
         temp.fear -= (t / 10);
     }
 
-    public ImageAlgo(ImageStat status) {
-        emotion = new Emotion();
-        AdjByMainColor(status.getMainColors());
-        AdjByContrast(status.getContrast(status.getHisto(0)));
-        AdjBySaturation(status.getSaturation());
-        AdjByTemperature(status.getTemp());
-    }
+
 }

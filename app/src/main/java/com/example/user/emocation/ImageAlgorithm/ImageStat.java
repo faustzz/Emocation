@@ -41,7 +41,6 @@ public class ImageStat{
 		temperature=0.0;
 
 		calcHisto(bfimg);
-		findColors(bfimg);
 		calcTemp();
 	}
 
@@ -90,32 +89,7 @@ public class ImageStat{
 			diff[min] = tmp;
 		}
 	}
-	private void findColors(Bitmap bi){
 
-		long [] diff = new long[primaryColors.length];
-		Arrays.fill(diff, 0);
-		for(int i=0;i<numOfPixels;i++){
-			int p = bi.getPixel(i%width, i/width);
-			for(int j=0;j<primaryColors.length;j++){
-				diff[j] += Math.abs(Color.red(primaryColors[j]) - Color.red(p));
-				diff[j] += Math.abs(Color.red(primaryColors[j]) - Color.green(p));
-				diff[j] += Math.abs(Color.red(primaryColors[j]) - Color.blue(p));
-			}
-
-		}
-
-		for(int i=0;i<3;i++){
-			int min = i;
-			for(int j=i;j<diff.length;j++){
-				if(diff[min]>diff[j])
-					min=j;
-			}
-			mainColors[i] = colorNames[min];
-			long tmp = diff[i];
-			diff[i] = diff[min];
-			diff[min] = tmp;
-		}
-	}
 	private void calcTemp(){
 		double meanY = (getHistoMean(histo_red)*0.6 +getHistoMean(histo_green)*0.4);
 		temperature += (meanY - getHistoMean(histo_blue))/3;

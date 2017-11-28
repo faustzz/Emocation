@@ -1,5 +1,7 @@
 package com.example.user.emocation.ImageInfo;
 
+import com.example.user.emocation.ImageAlgorithm.Emotion;
+
 import java.util.List;
 
 /**
@@ -9,12 +11,12 @@ import java.util.List;
 public class Picture {
     private String latitute;
     private String longitude;
-    private List<Double> avgEmotion;
+    private Emotion emotion;
 
-    public Picture(String latitute, String longitude, List<Double> avgEmotion, String image_name) {
+    public Picture(String latitute, String longitude, Emotion emotion, String image_name) {
         this.latitute = latitute;
         this.longitude = longitude;
-        this.avgEmotion = avgEmotion;
+        this.emotion = emotion;
         this.image_name = image_name;
     }
 
@@ -36,12 +38,12 @@ public class Picture {
         this.longitude = longitude;
     }
 
-    public List<Double> getAvgEmotion() {
-        return avgEmotion;
+    public Emotion getAvgEmotion() {
+        return emotion;
     }
 
-    public void setAvgEmotion(List<Double> avgEmotion) {
-        this.avgEmotion = avgEmotion;
+    public void setAvgEmotion(Emotion emotion) {
+        this.emotion = emotion;
     }
 
     public String getImage_name() {

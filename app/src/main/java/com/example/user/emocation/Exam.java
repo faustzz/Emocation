@@ -8,6 +8,7 @@ import android.graphics.Matrix;
 import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -18,6 +19,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.user.emocation.ImageAlgorithm.Emotion;
+import com.example.user.emocation.ImageAlgorithm.ImageAlgo;
+import com.example.user.emocation.ImageAlgorithm.ImageStat;
 import com.example.user.emocation.ImageInfo.LocationData;
 import com.example.user.emocation.ImageInfo.Picture;
 import com.pixelcan.emotionanalysisapi.EmotionRestClient;
@@ -33,16 +37,23 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * Issue : retroifit 서비스가 실행이 끝나는걸 기다려주지 않는다. retrofit 서비스가 끝나고 나서 button 강제 처리로 사진분석을 실행한다.
+ */
+
+/**
  * Created by user on 2017-11-24.
  */
 
 public class Exam extends AppCompatActivity {
+    private final int SPLASH_DISPLAY_LENGTH = 5000;
     private String gps_latitude = null, gps_longtitude = null;
     private TextView textView;
-    private ImageButton btn_gallery;
+    private ImageButton btn_gallery,btn_analysis;
     private Scores[] scores;
     private double[] savaAvgScores= new double[8];
     private List<Double> avgScores = new ArrayList<Double>();
+    Bitmap image_bitmap_analysis;
+    Emotion emotion;
     Uri uri;
     String name_Str;
     ImageToDB imageToDB;
@@ -56,8 +67,17 @@ public class Exam extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 selectFromGallery();
+
             }
         });
+        btn_analysis = (ImageButton)findViewById(R.id.start_analysis);
+        btn_analysis.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                backAnalysis(image_bitmap_analysis);
+            }
+        });
+
         textView = (TextView)findViewById(R.id.textView);
 
     }
@@ -97,6 +117,8 @@ public class Exam extends AppCompatActivity {
                 uri = data.getData();
                 exiF(data, name_Str);
                 retro(image_bitmap);
+
+                image_bitmap_analysis = image_bitmap;
             }
         }
     }
@@ -168,6 +190,7 @@ public class Exam extends AppCompatActivity {
                 textView.setText(
                         "\n image_GPS_LONG : " + gps_longtitude +
                                 "\n image_GPS_LA : " + gps_latitude) ;
+                emotion = new Emotion();
             }
 
             @Override
@@ -175,7 +198,6 @@ public class Exam extends AppCompatActivity {
 
                 Toast.makeText(getApplicationContext(),"성공",Toast.LENGTH_SHORT).show();
                 FaceAnalysis[] faceAnalysises = response;
-
                 scores = new Scores[response.length];
                 for(int i = 0 ; i < response.length ; i++){
                     scores[i] = faceAnalysises[i].getScores();
@@ -191,31 +213,59 @@ public class Exam extends AppCompatActivity {
                     savaAvgScores[7] += scores[i].getSurprise();
                 }
 
-                avgScores.add(savaAvgScores[0]);
-                avgScores.add(savaAvgScores[3]);
-                avgScores.add(savaAvgScores[4]);
-                avgScores.add(savaAvgScores[5]);
-                avgScores.add(savaAvgScores[6]);
-                avgScores.add(savaAvgScores[7]);
 
+                emotion = new Emotion(savaAvgScores[0]/response.length, savaAvgScores[3]/response.length, savaAvgScores[4]/response.length, savaAvgScores[5]/response.length, savaAvgScores[6]/response.length, savaAvgScores[7]/response.length); // contemt, disgust 제외하고 저장
+                btn_analysis.performClick(); //retrofit sevice가 완벽히 이뤄지고나서 사진 분석을 실행한다.
 
-                Picture picture = new Picture(gps_latitude, gps_longtitude,avgScores, name_Str);
-                LocationData locationData = new LocationData();
-                imageToDB = new ImageToDB(uri, locationData, picture, "사진");
-                imageToDB.saveToFirebase();
+//                Picture picture = new Picture(gps_latitude, gps_longtitude,emotion, name_Str);
+//                LocationData locationData = new LocationData();
+//                imageToDB = new ImageToDB(uri, locationData, picture, "사진");
+//                imageToDB.saveToFirebase();
 
-//                textView.setText(" anger : " + avgScores[0] +
-//                        " \n contempt : " + avgScores[1] +
-//                        " \n disgust : " + avgScores[2] +
-//                        " \n fear : " + avgScores[3] +
-//                        " \n happiness : " + avgScores[4] +
-//                        " \n neutral : " + avgScores[5] +
-//                        " \n sadness : " + avgScores[6] +
-//                        " \n surprise : " + avgScores[7] +
-//                        "\n image_GPS_LONG : " + gps_longtitude +
-//                        "\n image_GPS_LA : " + gps_latitude);
             }
         });
+    }
+
+    static String excessdouble(double emovalue){
+        int exponent=0;
+        String stringval=Double.toString(emovalue);  //문자열로 바꿈
+        if(stringval.length()>8){
+
+            if(stringval.indexOf("E") > -1){      //지수부분이 있으면
+                exponent=(stringval.charAt(stringval.indexOf("E")+2))-'0';   //지수값 저장
+                //0이하일때 처리
+                stringval=stringval.substring(0,stringval.indexOf("E")-exponent);  //가수부분만 다시저장,0들어갈자리만큼 뒷자리삭제
+                stringval=stringval.replace(".","");
+                for(int i=0;i<exponent;i++){
+                    if(i==exponent-1){stringval="."+stringval;}
+                    stringval="0"+stringval;//지수만큼0을 붙임
+                }
+            }
+            stringval=stringval.substring(0,8);    //소수점아래 6자리까지로 끊음
+        }
+        return stringval;
+    }
+
+    public void show(){
+        textView.setText(" anger : " + excessdouble(emotion.anger) +
+                " \n fear : " + excessdouble(emotion.fear) +
+                " \n happiness : " + excessdouble(emotion.happiness) +
+                " \n neutral : " + excessdouble(emotion.neutral) +
+                " \n sadness : " +excessdouble(emotion.sadness) +
+                " \n surprise : " + excessdouble(emotion.sadness) +
+                "\n image_GPS_LONG : " + gps_longtitude +
+                "\n image_GPS_LA : " + gps_latitude);
+    }
+
+    public void backAnalysis(Bitmap image_bitmap){
+
+        ImageAlgo imageAlgo_to_value = new ImageAlgo(image_bitmap);
+        ImageStat imageStat =imageAlgo_to_value.analysis();
+        ImageAlgo imageAlgo_to_analysis = new ImageAlgo(imageStat, emotion);
+
+        emotion = imageAlgo_to_analysis.emotion;
+
+        show();
 
     }
     public String getPath(Uri uri) { //이미지 파일 경로 구하기
