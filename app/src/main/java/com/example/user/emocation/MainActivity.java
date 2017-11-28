@@ -16,22 +16,39 @@ import android.widget.ImageButton;
 import java.io.File;
 
 
+
 public class MainActivity extends AppCompatActivity {
     private ImageButton galleryButton, cameraButton, searchButton;
+
     private Activity mainActivity = this;
     final int PICK_FROM_ALBUM = 1000;
     private Uri mCaptureUri;
     String baseImageUrl= "http://codingexplained.com/wp-content/uploads/2015/11/Screen-Shot-2015-11-18-at-21.45.22.png";
+
+    private void getPermission(){
+        int writePermissionCheck = ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        if(writePermissionCheck == PackageManager.PERMISSION_DENIED) {
+            ActivityCompat.requestPermissions(mainActivity, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
+        }
+        int cameraPermissionCheck = ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.CAMERA);
+        if(cameraPermissionCheck == PackageManager.PERMISSION_DENIED){
+            ActivityCompat.requestPermissions(mainActivity, new String[]{Manifest.permission.CAMERA},2);
+        }
+    }
+
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        getPermission();
 
         galleryButton = (ImageButton)findViewById(R.id.button_gallery);
         cameraButton = (ImageButton)findViewById(R.id.button_camera);
         searchButton = (ImageButton)findViewById(R.id.button_search);
+
+
 
         galleryButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -60,32 +77,17 @@ public class MainActivity extends AppCompatActivity {
         cameraButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(getApplicationContext(), CameraActivity.class);
+                    Intent intent = new Intent(getApplicationContext(), CameraActivity.class);
+                    startActivity(intent);
+            }
+        });
+
+        searchButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getApplicationContext(), Storage.class);
                 startActivity(intent);
             }
         });
     }
-
-
-//    @Override
-//    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-//        if(requestCode == PICK_FROM_ALBUM){
-//            if(resultCode == Activity.RESULT_OK){
-//                //Uri에서 이미지 이름을 얻어온다.
-//                //String name_Str = getImageNameToUri(data.getData());
-//
-//                //이미지 데이터를 비트맵으로 받아온다.
-//                Bitmap image_bitmap = null;
-//                try {
-//                    image_bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), data.getData());
-//                } catch (IOException e) {
-//                    e.printStackTrace();
-//                }
-//                ImageView image = (ImageView)findViewById(R.id.imageView);
-//
-//                //배치해놓은 ImageView에 set
-//                image.setImageBitmap(image_bitmap);
-//            }
-//        }
-//    }
 }

@@ -12,8 +12,11 @@ import android.support.annotation.Nullable;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.user.emocation.ImageAlgorithm.ImageAlgo;
+import com.example.user.emocation.ImageAlgorithm.ImageStat;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.storage.FirebaseStorage;
@@ -30,12 +33,13 @@ public class Storage extends Activity {
     FirebaseStorage storage = FirebaseStorage.getInstance();
     StorageReference storageRef = storage.getReference();
     private ImageButton btn_gallery;
+    private TextView textView;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_storage);
 
-        btn_gallery = (ImageButton)findViewById(R.id.button_gallery);
+        textView = (TextView)findViewById(R.id.textView);
         btn_gallery = (ImageButton)findViewById(R.id.button_gallery);
         btn_gallery.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -52,16 +56,38 @@ public class Storage extends Activity {
                 //Uri에서 이미지 이름을 얻어온다.
                 String name_Str = getImageNameToUri(data.getData());
 
-                uploadFile(data.getData(),name_Str);
+              //  uploadFile(data.getData(),name_Str);
                 Bitmap image_bitmap = null;
                 try {
                     image_bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), data.getData());
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
+
+
+                ImageAlgo imageAlgo = new ImageAlgo(image_bitmap);
+                ImageStat imageStat =imageAlgo.analysis();
+
+
                 ImageView image = (ImageView)findViewById(R.id.imageView);
                 //배치해놓은 ImageView에 set
                 image.setImageBitmap(image_bitmap);
+
+                double R,G,B,Br;
+
+                textView.setText("BRIGTNESS : " + (Br = imageStat.getBrightness()) +
+                        "\nSATURATION : " + imageStat.getSaturation() +
+                        "\nCONTRAST : " + imageStat.getContrast(imageStat.getHisto(0)) +
+                        "\nTEMPERATURE : " + imageStat.getTemp() +
+                        "\nAVG R : " + (R = imageStat.getHistoMean(imageStat.getHisto(1))) +
+                        "\nAVG G : " + (G = imageStat.getHistoMean(imageStat.getHisto(2))) +
+                        "\nAVG B : " + (B = imageStat.getHistoMean(imageStat.getHisto(3))) +
+                        "\ndiff R : " + (Br * 255 - R) +
+                        "\ndiff G : " + (Br * 255 - G) +
+                        "\ndiff B : " + (Br * 255 - B) +
+                        "\nmain color 0 : " + imageStat.getMainColors()[0] +
+                        "\nmain color 1 : " + imageStat.getMainColors()[1] +
+                        "\nmain color 2 : " + imageStat.getMainColors()[2]);
             }
         }
     }
@@ -82,8 +108,6 @@ public class Storage extends Activity {
 
     private void selectFromGallery(){
         Intent intent = new Intent(Intent.ACTION_PICK);
-        intent.setType(android.provider.MediaStore.Images.Media.CONTENT_TYPE);
-        intent.setData(android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         intent.setType(MediaStore.Images.Media.CONTENT_TYPE);
         intent.setData(MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         startActivityForResult(intent,1000);
