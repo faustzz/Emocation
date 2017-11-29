@@ -70,7 +70,7 @@ public class ImageToDB {
 
     private void saveImageDB(LocationData locationData, Picture picture){ //locationData 안에 picture가 있으니 좀 더 생각해 볼 것
         mDatabase = FirebaseDatabase.getInstance().getReference();
-        mDatabase.child(image_name).setValue(picture);
+        mDatabase.child("EmocationImg").child(image_name).setValue(picture);
     }
 
 

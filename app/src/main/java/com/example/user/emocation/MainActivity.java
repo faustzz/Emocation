@@ -2,6 +2,7 @@ package com.example.user.emocation;
 
 import android.Manifest;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
@@ -11,14 +12,17 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageButton;
+
+
 
 import java.io.File;
 
 
 
 public class MainActivity extends AppCompatActivity {
-    private ImageButton galleryButton, cameraButton, searchButton;
+    private ViewGroup galleryButton, cameraButton, searchButton;
 
     private Activity mainActivity = this;
     final int PICK_FROM_ALBUM = 1000;
@@ -44,9 +48,9 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         getPermission();
 
-        galleryButton = (ImageButton)findViewById(R.id.button_gallery);
-        cameraButton = (ImageButton)findViewById(R.id.button_camera);
-        searchButton = (ImageButton)findViewById(R.id.button_search);
+        galleryButton = (ViewGroup) findViewById(R.id.button_gallery);
+        cameraButton = (ViewGroup)findViewById(R.id.button_camera);
+        searchButton = (ViewGroup)findViewById(R.id.button_search);
 
 
 
@@ -90,4 +94,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
+
+
+
 }

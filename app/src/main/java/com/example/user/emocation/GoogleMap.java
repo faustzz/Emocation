@@ -29,7 +29,6 @@ import java.util.List;
 public class GoogleMap extends FragmentActivity implements OnMapReadyCallback{
 
     private DatabaseReference mDatabase; //DB 받아오기
-    Picture pictures;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -55,25 +54,15 @@ public class GoogleMap extends FragmentActivity implements OnMapReadyCallback{
         mDatabase.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                int i = 0;
                 for(DataSnapshot img_location : dataSnapshot.getChildren()){
-                    Emotion emotion = new Emotion();
-                    emotion.anger = Double.parseDouble(img_location.child("0").getValue().toString());
-                    emotion.fear = Double.parseDouble(img_location.child("1").getValue().toString());
-                    emotion.happiness = Double.parseDouble(img_location.child("2").getValue().toString());
-                    emotion.neutral = Double.parseDouble(img_location.child("3").getValue().toString());
-                    emotion.sadness = Double.parseDouble(img_location.child("4").getValue().toString());
-                    emotion.surprise = Double.parseDouble(img_location.child("5").getValue().toString());
+                    Picture picture = (Picture) img_location.getValue(Picture.class); // 데이터 search, Picture 형태로 가져옴
 
-                    pictures = new Picture(String.valueOf(img_location.child("latitute").getValue()),String.valueOf(img_location.child("longitude").getValue()),emotion,String.valueOf(img_location.child("image_name").getValue()));
-
-                    LatLng position = new LatLng(convert(pictures.getLatitute()),convert(pictures.getLongitude()));
+                    LatLng position = new LatLng(convert(picture.getLatitute()),convert(picture.getLongitude())); // 위치가 같으면 마커가 중복되면서 이 전 마커가 사라짐
                     MarkerOptions markerOptions = new MarkerOptions();
-                    markerOptions.title(pictures.getImage_name());
+                    markerOptions.title(picture.getImage_name());
                     markerOptions.position(position);
 
                     googleMap.addMarker(markerOptions);
-                    i++;
                 }
             }
 

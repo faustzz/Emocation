@@ -46,13 +46,14 @@ import java.util.List;
 public class CameraActivity extends Activity {
 
     private String gps_latitude = null, gps_longtitude = null;
-    Button capture = null;
+    ImageButton capture = null;
     ImageView iv = null;
     Uri mCurrentPhotoPath;
     private Activity cameraActivity = this;
     private TextView textView;
 
 
+    int i = 0;
     Uri uri;
     private ImageButton btn_analysis;
     private Scores[] scores;
@@ -92,6 +93,13 @@ public class CameraActivity extends Activity {
             @Override
             public void onClick(View view) {
                 backAnalysis(image_bitmap_analysis);
+
+                String name = "emocationImg" + i;
+                LocationData locationData = new LocationData(); // 장식용
+                Picture picture = new Picture(gps_latitude, gps_longtitude, emotion, name);
+                ImageToDB imageToDB = new ImageToDB(uri, locationData, picture, name);
+                imageToDB.saveToFirebase();
+                i++;
             }
         });
     }
@@ -104,7 +112,7 @@ public class CameraActivity extends Activity {
     }
 
     private void setup(){
-        capture = (Button)findViewById(R.id.btn);
+        capture = (ImageButton)findViewById(R.id.btn);
         iv = (ImageView)findViewById(R.id.iv);
     }
 
@@ -138,14 +146,8 @@ public class CameraActivity extends Activity {
                     e.getStackTrace();
                 }
 
-               // uri = data.getData();
                 retro(imageBitmap);
                 image_bitmap_analysis = imageBitmap;
-
-                LocationData locationData = new LocationData(); // 장식용
-                Picture picture = new Picture(gps_latitude, gps_longtitude, emotion, name_Str);
-                ImageToDB imageToDB = new ImageToDB(uri, locationData, picture, name_Str);
-                imageToDB.saveToFirebase();
 
                 saveExifFile(imageBitmap, photoPath);
                 iv.setImageBitmap(imageBitmap);
@@ -222,8 +224,20 @@ public class CameraActivity extends Activity {
         return (tag + " : " + exif.getAttribute(tag) + "\n");
     }
     private void showExif(ExifInterface exif){
-        gps_latitude = getTagString(ExifInterface.TAG_GPS_LATITUDE,exif);
-        gps_longtitude = getTagString(ExifInterface.TAG_GPS_LONGITUDE,exif);
+
+        gps_latitude = subString(getTagString(ExifInterface.TAG_GPS_LATITUDE,exif));
+        gps_longtitude = subString(getTagString(ExifInterface.TAG_GPS_LONGITUDE,exif));
+    }
+
+    public String subString(String str){
+
+        // 먼저 @ 의 인덱스를 찾는다 - 인덱스 값: 5
+        int idx = str.indexOf(":");
+
+        String str2 = str.substring(idx+2); // : 바로 뒷부분부터 추출한다.
+
+        return str2;
+
     }
 
     public void exiF(String str){

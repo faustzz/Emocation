@@ -9,10 +9,13 @@ import java.util.List;
  */
 
 public class Picture {
+
+    private String image_name;
     private String latitute;
     private String longitude;
     private Emotion emotion;
 
+    public Picture(){}
     public Picture(String latitute, String longitude, Emotion emotion, String image_name) {
         this.latitute = latitute;
         this.longitude = longitude;
@@ -20,7 +23,6 @@ public class Picture {
         this.image_name = image_name;
     }
 
-    private String image_name;
 
     public String getLatitute() {
         return latitute;
@@ -38,11 +40,11 @@ public class Picture {
         this.longitude = longitude;
     }
 
-    public Emotion getAvgEmotion() {
+    public Emotion getEmotion() {
         return emotion;
     }
 
-    public void setAvgEmotion(Emotion emotion) {
+    public void setEmotion(Emotion emotion) {
         this.emotion = emotion;
     }
 
