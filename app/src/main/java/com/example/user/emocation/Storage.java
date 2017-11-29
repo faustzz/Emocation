@@ -65,29 +65,6 @@ public class Storage extends Activity {
                 }
 
 
-                ImageAlgo imageAlgo = new ImageAlgo(image_bitmap);
-                ImageStat imageStat =imageAlgo.analysis();
-
-
-                ImageView image = (ImageView)findViewById(R.id.imageView);
-                //배치해놓은 ImageView에 set
-                image.setImageBitmap(image_bitmap);
-
-                double R,G,B,Br;
-
-                textView.setText("BRIGTNESS : " + (Br = imageStat.getBrightness()) +
-                        "\nSATURATION : " + imageStat.getSaturation() +
-                        "\nCONTRAST : " + imageStat.getContrast(imageStat.getHisto(0)) +
-                        "\nTEMPERATURE : " + imageStat.getTemp() +
-                        "\nAVG R : " + (R = imageStat.getHistoMean(imageStat.getHisto(1))) +
-                        "\nAVG G : " + (G = imageStat.getHistoMean(imageStat.getHisto(2))) +
-                        "\nAVG B : " + (B = imageStat.getHistoMean(imageStat.getHisto(3))) +
-                        "\ndiff R : " + (Br * 255 - R) +
-                        "\ndiff G : " + (Br * 255 - G) +
-                        "\ndiff B : " + (Br * 255 - B) +
-                        "\nmain color 0 : " + imageStat.getMainColors()[0] +
-                        "\nmain color 1 : " + imageStat.getMainColors()[1] +
-                        "\nmain color 2 : " + imageStat.getMainColors()[2]);
             }
         }
     }

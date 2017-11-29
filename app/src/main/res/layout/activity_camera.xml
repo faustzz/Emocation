@@ -17,7 +17,13 @@
         android:text="찍자"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
-
+    <ImageButton
+        android:visibility="gone"
+        android:id="@+id/start_analysis"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="#00ff0000"
+        android:src="@drawable/ic_photo_album_black_48dp"/>
     <TextView
         android:id="@+id/text11"
         android:layout_width="match_parent"

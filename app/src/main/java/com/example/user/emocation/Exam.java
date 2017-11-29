@@ -110,8 +110,8 @@ public class Exam extends AppCompatActivity {
                 }
 
                 ImageView image = (ImageView)findViewById(R.id.imageView);
-
                 //배치해놓은 ImageView에 set
+
                 image.setImageBitmap(image_bitmap);
 
                 uri = data.getData();
