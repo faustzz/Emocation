@@ -1,18 +1,100 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:layout_weight="3"
     tools:context="com.example.user.emocation.MainActivity">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Hello World!"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
 
-</android.support.constraint.ConstraintLayout>
+    <LinearLayout
+        android:id="@+id/button_gallery"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="horizontal"
+        android:background="#e28dfe">
+
+        <ImageButton
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:padding="0sp"
+            android:scaleType="centerCrop"
+            android:layout_gravity="center"
+            android:layout_marginStart="30dp"
+            android:background="#00ff0000"
+            android:src="@mipmap/galary" />
+
+        <TextView
+            android:id="@+id/textView2"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:layout_weight="1"
+            android:text="Get picture from my Gallery" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/button_camera"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="horizontal"
+        android:background="#ebafff">
+
+        <ImageButton
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:padding="0sp"
+            android:scaleType="centerCrop"
+            android:layout_gravity="center"
+            android:layout_marginStart="30dp"
+            android:background="#00ff0000"
+            android:src="@mipmap/camera"/>
+
+        <TextView
+            android:id="@+id/textView3"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:layout_weight="1"
+            android:text="Take a new picture" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/button_search"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="horizontal"
+        android:background="#f2ccff">
+
+        <ImageButton
+
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:padding="0sp"
+            android:scaleType="centerCrop"
+            android:layout_gravity="center"
+            android:layout_marginStart="30dp"
+            android:background="#00ff0000"
+            android:src="@mipmap/search" />
+
+        <TextView
+            android:id="@+id/textView4"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:layout_weight="1"
+            android:text="Search" />
+
+    </LinearLayout>
+
+</LinearLayout>
