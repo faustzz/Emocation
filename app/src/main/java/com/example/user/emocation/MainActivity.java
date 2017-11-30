@@ -29,25 +29,11 @@ public class MainActivity extends AppCompatActivity {
     private Uri mCaptureUri;
     String baseImageUrl= "http://codingexplained.com/wp-content/uploads/2015/11/Screen-Shot-2015-11-18-at-21.45.22.png";
 
-    private void getPermission(){
-        int writePermissionCheck = ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE);
-        if(writePermissionCheck == PackageManager.PERMISSION_DENIED) {
-            ActivityCompat.requestPermissions(mainActivity, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
-        }
-        int cameraPermissionCheck = ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.CAMERA);
-        if(cameraPermissionCheck == PackageManager.PERMISSION_DENIED){
-            ActivityCompat.requestPermissions(mainActivity, new String[]{Manifest.permission.CAMERA},2);
-        }
-    }
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        getPermission();
-
         galleryButton = (ViewGroup) findViewById(R.id.button_gallery);
         cameraButton = (ViewGroup)findViewById(R.id.button_camera);
         searchButton = (ViewGroup)findViewById(R.id.button_search);
@@ -56,19 +42,14 @@ public class MainActivity extends AppCompatActivity {
 
         galleryButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
+            public void onClick(View view) { // 클릭 시 갤러리에 emocation 폴더생성 , Exam 액티비티로 이동
 
                 int writePermissionCheck = ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE);
                 int readPermissionCheck = ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.READ_EXTERNAL_STORAGE);
-                if(writePermissionCheck == PackageManager.PERMISSION_DENIED || readPermissionCheck == PackageManager.PERMISSION_DENIED){
+                if(writePermissionCheck == PackageManager.PERMISSION_DENIED || readPermissionCheck == PackageManager.PERMISSION_DENIED){ // 갤러리에 폴더 생성을 위한 Permission 접근
                     ActivityCompat.requestPermissions(mainActivity, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},1);
-//                    File emocation = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM) + "/emocation");
-//                    if(!emocation.exists())
-//                        emocation.mkdir();
-//                    Intent intent = new Intent(getApplicationContext(), Exam.class);
-//                    startActivity(intent);
                 }else{
-                    File emocation = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM) + "/emocation");
+                    File emocation = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM) + "/emocation"); //emocation 폴더 생성
                     if(!emocation.exists()) {
                         emocation.mkdir();
                     }
@@ -81,8 +62,15 @@ public class MainActivity extends AppCompatActivity {
         cameraButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
+                int cameraPermissionCheck = ContextCompat.checkSelfPermission(getApplicationContext(), android.Manifest.permission.CAMERA);     // 카메라 사용 Permission 체크를 위한 변수
+                if(cameraPermissionCheck == PackageManager.PERMISSION_DENIED){
+                    ActivityCompat.requestPermissions(mainActivity, new String[]{android.Manifest.permission.CAMERA},2);      // 사용 권한이 없을 경우 사용 권한 Request.
+                }
+                else {
                     Intent intent = new Intent(getApplicationContext(), CameraActivity.class);
                     startActivity(intent);
+                }
             }
         });
 
@@ -94,7 +82,4 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
-
-
-
 }

@@ -34,12 +34,8 @@ public class GoogleMap extends FragmentActivity implements OnMapReadyCallback{
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map);
-
         mDatabase = FirebaseDatabase.getInstance().getReference();
-
-
-
-        FragmentManager fragmentManager = getFragmentManager();
+        
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
@@ -88,7 +84,7 @@ public class GoogleMap extends FragmentActivity implements OnMapReadyCallback{
         });
     }
 
-    static Double convert(String LongLat){
+    static Double convert(String LongLat){ // 도 분 초로 표현 된 위도경도값을 십진법으로 표현
         double dd=0,mm=0,ss=0;
         String[] str = LongLat.split("/1");
 
