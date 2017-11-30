@@ -252,7 +252,7 @@ public class Exam extends AppCompatActivity {
                 " \n happiness : " + excessdouble(emotion.happiness) +
                 " \n neutral : " + excessdouble(emotion.neutral) +
                 " \n sadness : " +excessdouble(emotion.sadness) +
-                " \n surprise : " + excessdouble(emotion.sadness) +
+                " \n surprise : " + excessdouble(emotion.surprise) +
                 "\n image_GPS_LONG : " + gps_longtitude +
                 "\n image_GPS_LA : " + gps_latitude);
     }
