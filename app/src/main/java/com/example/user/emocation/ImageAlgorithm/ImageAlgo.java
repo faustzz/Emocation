@@ -121,7 +121,7 @@ public class ImageAlgo {
         backgroundValue.add(new BGvalue(vital,tempo,mordern));
     }
 
-    private void AdjByTemperature(double t) {   //modify backgroundValue by temporature that is obtained by analizing
+    private void AdjByTemperature(double t) {   //modify backgroundValue by temperature that is obtained by analizing
         double vital=0,tempo=t/10,mordern=0;
         backgroundValue.add(new BGvalue(vital,tempo,mordern));
     }
