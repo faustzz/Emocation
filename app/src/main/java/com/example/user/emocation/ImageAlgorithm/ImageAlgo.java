@@ -17,9 +17,9 @@ import java.util.Arrays;
 
 public class ImageAlgo {
     /*
-    This class determines 3 values about total picture.
+    This class determines 3 values about total picture and adjust emtion values which is input to get final emtion value.
     It is about the (total/average) vitality, temporature, mordernity of input picture.
-    The calculation result is stored in this class as 'backgroundValue'.
+    The calculation result is stored in this class as 'backgroundValue' and 'totalValue'.
     */
     TextView textView;
     Bitmap bitmap;
@@ -44,10 +44,8 @@ public class ImageAlgo {
         AdjByTemperature(status.getTemp());
         AdjBySaturation(status.getSaturation());
     }
-
     
     
-
 //    public ImageStat analysis(){        //analize the img to find some information about img
 //        ImageStat imgstat = null;
 //        try {
@@ -58,6 +56,7 @@ public class ImageAlgo {
 //        return imgstat;
 //    }
 
+    
     private void AdjByMainColor(String[] mainColors) {  
         //modify backgroundValue and total emotion value by main 3 colors that is obtained by analizing
         double vital=0,tempo=0,mordern=0;
