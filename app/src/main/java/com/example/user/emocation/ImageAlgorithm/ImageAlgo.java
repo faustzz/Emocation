@@ -16,10 +16,15 @@ import java.util.Arrays;
 
 
 public class ImageAlgo {
+    /*
+    This class determines 3 values about total picture.
+    It is about the (total/average) vitality, temporature, mordernity of input picture.
+    The calculation result is stored in this class as 'backgroundValue'.
+    */
     TextView textView;
     Bitmap bitmap;
 //    private Emotion emotion;
-    private BGvalue backgroundValue;
+    private BGvalue backgroundValue;   
 
     public ImageAlgo(){
 
@@ -45,7 +50,7 @@ public class ImageAlgo {
 //    }
 
 
-    public ImageStat analysis(){
+    public ImageStat analysis(){        //analize the img to find some information about img
         ImageStat imgstat = null;
         try {
             imgstat = new ImageStat(bitmap);
@@ -55,10 +60,10 @@ public class ImageAlgo {
         return imgstat;
     }
 
-    private void AdjByMainColor(String[] mainColors) {
+    private void AdjByMainColor(String[] mainColors) {  //modify backgroundValue by main 3 colors that is obtained by analizing
         double vital=0,tempo=0,mordern=0;
         for (int i = 1; i < 4; i++) {
-            if (mainColors[i - 1].compareTo("red") == 0) {
+            if (mainColors[i - 1].compareTo("red") == 0) {  
                 vital += (0.04 / i);
                 tempo += (0.02 / i);
                 mordern -= (0.02 / i);
@@ -99,7 +104,7 @@ public class ImageAlgo {
         backgroundValue.add(new BGvalue(vital,tempo,mordern));
     }
 
-    private void AdjByContrast(double contrast) {
+    private void AdjByContrast(double contrast) {   //modify backgroundValue by contrast that is obtained by analizing
         double vital=0,tempo=0,mordern=0;
         vital -= (1-contrast)/10;
         tempo += (contrast-0.5)/10;
@@ -108,7 +113,7 @@ public class ImageAlgo {
         backgroundValue.add(new BGvalue(vital,tempo,mordern));
     }
 
-    private void AdjBySaturation(double saturation) {
+    private void AdjBySaturation(double saturation) {   //modify backgroundValue by saturation that is obtained by analizing
         double vital=0,tempo=0,mordern=0;
         vital -= (1-saturation)/10;
         tempo -= saturation/100;
@@ -116,7 +121,7 @@ public class ImageAlgo {
         backgroundValue.add(new BGvalue(vital,tempo,mordern));
     }
 
-    private void AdjByTemperature(double t) {
+    private void AdjByTemperature(double t) {   //modify backgroundValue by temporature that is obtained by analizing
         double vital=0,tempo=t/10,mordern=0;
         backgroundValue.add(new BGvalue(vital,tempo,mordern));
     }
