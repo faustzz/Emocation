@@ -3,16 +3,19 @@ package com.example.user.emocation;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.media.ExifInterface;
+import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.StrictMode;
+import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
@@ -45,11 +48,11 @@ import java.util.List;
 
 public class CameraActivity extends Activity {
 
-    int i = 0; // 찍은 사진의 개수
+    // 안드로이드 내부 DB사용을 위한 선언 (간단한 값이라서 내부DB 사용)
+    SharedPreferences mPref;
     //Layout
     private ImageButton capture = null;
     private ImageView iv = null;
-    private Activity cameraActivity = this;
     private TextView textView;
     private ImageButton btn_analysis;
 
@@ -71,6 +74,8 @@ public class CameraActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_camera);
 
+
+
         setup(); // 버튼, 이미지 뷰 세팅
         capture.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -81,27 +86,23 @@ public class CameraActivity extends Activity {
                 Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                 mCurrentPhotoPath = FUNCTION.createImageFile();                           // mCurrentPhotoPath = 사진이 저장될 경로
                 intent.putExtra(MediaStore.EXTRA_OUTPUT,mCurrentPhotoPath);    // putExtra를 통해 사진의 저장 경로를 지정해준다.
-
+                startActivityForResult(intent,1);
 
             }
         });
 
-        btn_analysis = (ImageButton)findViewById(R.id.start_analysis);
         btn_analysis.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                backAnalysis(image_bitmap_analysis);
-                String name = "emocationImg" + i;
+                backAnalysis(image_bitmap_analysis); // 배경 분석을 하고
                 LocationData locationData = new LocationData(); // 장식용
-                Picture picture = new Picture(gps_latitude, gps_longtitude, emotion, name);
-                ImageToDB imageToDB = new ImageToDB(selectedImageUri, locationData, picture, name);
+                Picture picture = new Picture(gps_latitude, gps_longtitude, emotion, FUNCTION.subString(selectedImageName,"."));
+                ImageToDB imageToDB = new ImageToDB(selectedImageUri, locationData, picture, FUNCTION.subString(selectedImageName,"."));
                 imageToDB.saveToFirebase();
-                i++;
+                //setSharedPref(imageNumber);
             }
         });
     }
-
-
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -187,8 +188,8 @@ public class CameraActivity extends Activity {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        gps_latitude = FUNCTION.subString(getTagString(ExifInterface.TAG_GPS_LATITUDE,exif));
-        gps_longtitude = FUNCTION.subString(getTagString(ExifInterface.TAG_GPS_LONGITUDE,exif));
+        gps_latitude = FUNCTION.subString(getTagString(ExifInterface.TAG_GPS_LATITUDE,exif),":");
+        gps_longtitude = FUNCTION.subString(getTagString(ExifInterface.TAG_GPS_LONGITUDE,exif),":");
     }
 
 
@@ -236,7 +237,9 @@ public class CameraActivity extends Activity {
 
     private void setup(){ // layout 설정
         capture = (ImageButton)findViewById(R.id.btn);
+        btn_analysis = (ImageButton)findViewById(R.id.start_analysis);
         iv = (ImageView)findViewById(R.id.iv);
+        textView = (TextView)findViewById(R.id.textView);
     }
 
 }

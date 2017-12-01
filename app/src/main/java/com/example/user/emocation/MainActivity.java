@@ -77,8 +77,15 @@ public class MainActivity extends AppCompatActivity {
         searchButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(getApplicationContext(), GoogleMap.class);
-                startActivity(intent);
+
+                int readPermissionCheck = ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.READ_EXTERNAL_STORAGE);
+                if(readPermissionCheck == PackageManager.PERMISSION_DENIED){ // 갤러리에 폴더 생성을 위한 Permission 접근
+                    ActivityCompat.requestPermissions(mainActivity, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},1);
+                }
+                else {
+                    Intent intent = new Intent(getApplicationContext(), GoogleMap.class);
+                    startActivity(intent);
+                }
             }
         });
     }

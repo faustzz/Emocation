@@ -2,20 +2,25 @@ package com.example.user.emocation.ImageInfo;
 
 import com.example.user.emocation.ImageAlgorithm.Emotion;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
  * Created by user on 2017-11-28.
  */
 
-public class Picture {
 
-    private String image_name;
+@SuppressWarnings("serial")
+public class Picture implements Serializable {
+
     private String latitute;
     private String longitude;
     private Emotion emotion;
+    private String image_name;
+
 
     public Picture(){}
+
     public Picture(String latitute, String longitude, Emotion emotion, String image_name) {
         this.latitute = latitute;
         this.longitude = longitude;

@@ -2,6 +2,7 @@ package com.example.user.emocation;
 
 import android.app.Fragment;
 import android.app.FragmentManager;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentActivity;
@@ -12,6 +13,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -35,7 +37,7 @@ public class GoogleMap extends FragmentActivity implements OnMapReadyCallback{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map);
         mDatabase = FirebaseDatabase.getInstance().getReference();
-        
+
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
@@ -43,22 +45,26 @@ public class GoogleMap extends FragmentActivity implements OnMapReadyCallback{
 
     @Override
     public void onMapReady(final com.google.android.gms.maps.GoogleMap googleMap) {
-        LatLng sydney = new LatLng(-33.852, 151.211);
-        googleMap.addMarker(new MarkerOptions().position(sydney)
-                .title("Marker in Sydney"));
-        googleMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+        LatLng seoul = new LatLng(37.556915, 127.006028);
+        googleMap.addMarker(new MarkerOptions().position(seoul)
+                .title("Seoul"));
+        googleMap.moveCamera(CameraUpdateFactory.newLatLng(seoul));
+        googleMap.animateCamera(CameraUpdateFactory.zoomTo(15));
+
         mDatabase.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 for(DataSnapshot img_location : dataSnapshot.getChildren()){
                     Picture picture = (Picture) img_location.getValue(Picture.class); // 데이터 search, Picture 형태로 가져옴
 
-                    LatLng position = new LatLng(convert(picture.getLatitute()),convert(picture.getLongitude())); // 위치가 같으면 마커가 중복되면서 이 전 마커가 사라짐
-                    MarkerOptions markerOptions = new MarkerOptions();
-                    markerOptions.title(picture.getImage_name());
-                    markerOptions.position(position);
+                    if(picture.getLatitute() != "null" || picture.getLongitude() != "null") {
+                        LatLng position = new LatLng(convert(picture.getLatitute()), convert(picture.getLongitude())); // 위치가 같으면 마커가 중복되면서 이 전 마커가 사라짐
+                        MarkerOptions markerOptions = new MarkerOptions();
+//                      markerOptions.title(picture.getImage_name());
+                        markerOptions.position(position);
+                        googleMap.addMarker(markerOptions).setTag(picture); // 마커 추가, 정보 숨김
+                    }
 
-                    googleMap.addMarker(markerOptions);
                 }
             }
 
@@ -80,6 +86,19 @@ public class GoogleMap extends FragmentActivity implements OnMapReadyCallback{
             @Override
             public void onCancelled(DatabaseError databaseError) {
 
+            }
+        });
+
+        googleMap.setOnMarkerClickListener(new com.google.android.gms.maps.GoogleMap.OnMarkerClickListener() { // 마커 클릭 시
+            @Override
+            public boolean onMarkerClick(Marker marker) {
+                Intent intent = new Intent(getApplicationContext(), MarkerActivity.class);
+
+                Picture picture = (Picture)marker.getTag();
+                intent.putExtra("title",picture);
+
+                startActivity(intent);
+                return false;
             }
         });
     }

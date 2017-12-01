@@ -80,13 +80,13 @@ public class ImageToDB {
         uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
             @Override
             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-               // Toast.makeText(getApplicationContext(),"성공",Toast.LENGTH_SHORT).show();
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
-               // Toast.makeText(getApplicationContext(),"실패",Toast.LENGTH_SHORT).show();
             }
         });
     }
+
+
 }

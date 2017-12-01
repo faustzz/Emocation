@@ -4,6 +4,11 @@
     android:layout_height="match_parent"
     android:background="#ffeefd">
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="vertical">
     <ImageView
         android:layout_width="250dp"
         android:layout_height="250dp"
@@ -23,7 +28,7 @@
         android:background="#00ff0000"
         android:src="@drawable/ic_photo_album_black_48dp"
         android:visibility="gone" />
-
+    </LinearLayout>
     <ImageButton
         android:id="@+id/button_gallery"
         android:layout_width="80dp"
@@ -34,16 +39,16 @@
         android:background="#00ff0000"
         android:src="@mipmap/galary"/>
 
-    <ScrollView
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginStart="20dp">
+        android:layout_height="match_parent">
         <TextView
             android:id="@+id/textView"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:text="Result : "
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
             />
-    </ScrollView>
-
+    </LinearLayout>
 </LinearLayout>

@@ -75,12 +75,15 @@ public class Functions { // 자주쓰는 함수들 모아논 class
     }
 
 
-    public String subString(String str){
+    public String subString(String str, String index){
 
         // 먼저 @ 의 인덱스를 찾는다 - 인덱스 값: 5
-        int idx = str.indexOf(":");
-
-        String str2 = str.substring(idx+2); // : 바로 뒷부분부터 추출한다.
+        int idx = str.indexOf(index);
+        String str2 = str;
+        if(index == ":") // exif의 gps string 분해를 위해
+            str2 = str.substring(idx+2); // : 바로 뒷부분부터 추출한다.
+        if(index == ".") // 사진 string 분해를 위해
+            str2 = str.substring(0,idx); // : 앞부분 부터 추출한다.
 
         return str2;
 
