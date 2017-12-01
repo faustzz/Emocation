@@ -1,66 +1,64 @@
 package com.example.user.emocation.ImageInfo;
 
+import android.net.Uri;
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by user on 2017-11-28.
  */
 
-public class LocationData {
-    private String localNmae;
-    private double latitude;
-    private double longitude;
-    private List<Double> avgEmotion; // 사진의 emotion값들의 평균치
-    private Picture[] pics;
+public class LocationData implements Parcelable {
+     List<Picture> picture = new ArrayList<Picture>(); // 사진 정보
+     Map<String, Uri> locate = new HashMap<String,Uri>(); // 각 위치 사진의 uri 정보
 
     public LocationData(){}
 
-    public LocationData(String localNmae, double latitude, double longitude, List<Double> avgEmotion, Picture[] pics) {
-        this.localNmae = localNmae;
-        this.latitude = latitude;
-        this.longitude = longitude;
-        this.avgEmotion = avgEmotion;
-        this.pics = pics;
+    protected LocationData(Parcel in) {
     }
 
-    public String getLocalNmae() {
-        return localNmae;
+    public static final Creator<LocationData> CREATOR = new Creator<LocationData>() {
+        @Override
+        public LocationData createFromParcel(Parcel in) {
+            return new LocationData(in);
+        }
+
+        @Override
+        public LocationData[] newArray(int size) {
+            return new LocationData[size];
+        }
+    };
+
+    public  List<Picture> getPicture() {
+        return picture;
     }
 
-    public void setLocalNmae(String localNmae) {
-        this.localNmae = localNmae;
+    public void setPicture(Picture picture) {
+        this.picture.add(picture);
     }
 
-    public double getLatitude() {
-        return latitude;
+    public Map<String, Uri> getLocate() {
+        return locate;
     }
 
-    public void setLatitude(double latitude) {
-        this.latitude = latitude;
+    public void setLocate(String imageName, Uri uri) {
+        this.locate.put(imageName,uri);
     }
 
-    public double getLongitude() {
-        return longitude;
+    @Override
+    public int describeContents() {
+        return 0;
     }
 
-    public void setLongitude(double longitude) {
-        this.longitude = longitude;
-    }
-
-    public List<Double> getAvgEmotion() {
-        return avgEmotion;
-    }
-
-    public void setAvgEmotion(List<Double> avgEmotion) {
-        this.avgEmotion = avgEmotion;
-    }
-
-    public Picture[] getPics() {
-        return pics;
-    }
-
-    public void setPics(Picture[] pics) {
-        this.pics = pics;
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeList(picture);
+        parcel.writeMap(locate);
     }
 }

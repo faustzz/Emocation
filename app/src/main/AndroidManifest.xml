@@ -5,7 +5,7 @@
     <uses-permission android:name="android.permission.INTERNET"></uses-permission>
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"></uses-permission>
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"></uses-permission>
     <uses-permission android:name="android.permission.CAMERA"/>
     <application
         android:allowBackup="true"
@@ -24,10 +24,11 @@
         </activity>
         <activity android:name=".LoginActivity"/>
         <activity android:name=".CameraActivity"/>
-        <activity android:name=".Storage"/>
         <activity android:name=".Exam"/>
         <activity android:name=".MainActivity"/>
         <activity android:name=".GoogleMap"/>
+        <activity android:name=".MarkerImageActivity"/>
+        <activity android:name=".MarkerLocationActivity"/>
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"

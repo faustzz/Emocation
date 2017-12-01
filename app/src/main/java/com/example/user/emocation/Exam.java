@@ -19,6 +19,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.user.emocation.ImageAlgorithm.BGvalue;
 import com.example.user.emocation.ImageAlgorithm.Emotion;
 import com.example.user.emocation.ImageAlgorithm.ImageAlgo;
 import com.example.user.emocation.ImageAlgorithm.ImageStat;
@@ -45,18 +46,28 @@ import java.util.List;
  */
 
 public class Exam extends AppCompatActivity {
-    private final int SPLASH_DISPLAY_LENGTH = 5000;
-    private String gps_latitude = null, gps_longtitude = null;
-    private TextView textView;
+
+    //Layout
+    private TextView txt_totalValue, txt_emotionValue, txt_backValue;
     private ImageButton btn_gallery,btn_analysis;
+
+
+
+    //emotion
     private Scores[] scores;
-    private double[] savaAvgScores= new double[8];
-    private List<Double> avgScores = new ArrayList<Double>();
-    Bitmap image_bitmap_analysis;
-    Emotion emotion;
-    Uri uri;
-    String name_Str;
-    ImageToDB imageToDB;
+    private double[] savaAvgScores= new double[8]; // 평균 emotion 값을 저장
+    private Bitmap image_bitmap_analysis;
+    private Emotion emotion; // 감정 분석값
+    private BGvalue backValue; //배경 분석값
+    private Emotion totalEmotionValue; // 배경 + 감정 분석 값
+
+    //image
+    private Uri uri;
+    private String selectedImageName;
+    private String gps_latitude = null, gps_longtitude = null;
+
+    private Functions FUNCTION = new Functions();
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -74,11 +85,13 @@ public class Exam extends AppCompatActivity {
         btn_analysis.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                backAnalysis(image_bitmap_analysis);
+                backAnalysis(image_bitmap_analysis, emotion);
             }
         });
 
-        textView = (TextView)findViewById(R.id.textView);
+        txt_totalValue = (TextView)findViewById(R.id.txt_totalValue);
+        txt_emotionValue = (TextView)findViewById(R.id.txt_emotionValue);
+        txt_backValue = (TextView)findViewById(R.id.txt_backValue);
 
     }
 
@@ -88,7 +101,7 @@ public class Exam extends AppCompatActivity {
         if(requestCode == 1000){
             if(resultCode == Activity.RESULT_OK){
                 //Uri에서 이미지 이름을 얻어온다.
-                name_Str = getImageNameToUri(data.getData());
+                selectedImageName = getImageNameToUri(data.getData());
                 //이미지 데이터를 비트맵으로 받아온다.
                 Bitmap image_bitmap = null;
 
@@ -102,7 +115,7 @@ public class Exam extends AppCompatActivity {
                 try {
                     ExifInterface exif = new ExifInterface(photoPath);
                     int exifOrientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL);
-                    int exifDegree = exifOrientationToDegrees(exifOrientation);     // 카메라가 현재 얼마나 회전되어있는지?
+                    int exifDegree = FUNCTION.exifOrientationToDegrees(exifOrientation);     // 카메라가 현재 얼마나 회전되어있는지?
                     image_bitmap = rotate(image_bitmap, exifDegree);
 
                 } catch (IOException e) {
@@ -115,7 +128,7 @@ public class Exam extends AppCompatActivity {
                 image.setImageBitmap(image_bitmap);
 
                 uri = data.getData();
-                exiF(data, name_Str);
+                exiF(data, selectedImageName);
                 retro(image_bitmap);
 
                 image_bitmap_analysis = image_bitmap;
@@ -144,23 +157,6 @@ public class Exam extends AppCompatActivity {
         return retBitmap;
     }
 
-    public int exifOrientationToDegrees(int exifOrientation){
-        if(exifOrientation == ExifInterface.ORIENTATION_ROTATE_90){
-            return 90;
-        }else if(exifOrientation == ExifInterface.ORIENTATION_ROTATE_180){
-            return 180;
-        }else if(exifOrientation == ExifInterface.ORIENTATION_ROTATE_270){
-            return 270;
-        }
-        return 0;
-    }
-    private void showExif(ExifInterface exif){
-        gps_latitude = getTagString(ExifInterface.TAG_GPS_LATITUDE,exif);
-        gps_longtitude = getTagString(ExifInterface.TAG_GPS_LONGITUDE,exif);
-    }
-    private String getTagString(String tag, ExifInterface exif){
-        return (tag + " : " + exif.getAttribute(tag) + "\n");
-    }
 
     private void selectFromGallery(){
         Intent intent = new Intent(Intent.ACTION_PICK);
@@ -187,7 +183,7 @@ public class Exam extends AppCompatActivity {
             @Override
             public void onError(String errorMessage) {
                 Toast.makeText(getApplicationContext(),errorMessage,Toast.LENGTH_LONG).show();
-                textView.setText(
+                txt_totalValue.setText(
                         "\n image_GPS_LONG : " + gps_longtitude +
                                 "\n image_GPS_LA : " + gps_latitude) ;
                 emotion = new Emotion();
@@ -226,44 +222,35 @@ public class Exam extends AppCompatActivity {
         });
     }
 
-    static String excessdouble(double emovalue){
-        int exponent=0;
-        String stringval=Double.toString(emovalue);  //문자열로 바꿈
-        if(stringval.length()>8){
-
-            if(stringval.indexOf("E") > -1){      //지수부분이 있으면
-                exponent=(stringval.charAt(stringval.indexOf("E")+2))-'0';   //지수값 저장
-                //0이하일때 처리
-                stringval=stringval.substring(0,stringval.indexOf("E")-exponent);  //가수부분만 다시저장,0들어갈자리만큼 뒷자리삭제
-                stringval=stringval.replace(".","");
-                for(int i=0;i<exponent;i++){
-                    if(i==exponent-1){stringval="."+stringval;}
-                    stringval="0"+stringval;//지수만큼0을 붙임
-                }
-            }
-            stringval=stringval.substring(0,8);    //소수점아래 6자리까지로 끊음
-        }
-        return stringval;
-    }
-
     public void show(){
-        textView.setText(" anger : " + excessdouble(emotion.anger) +
-                " \n fear : " + excessdouble(emotion.fear) +
-                " \n happiness : " + excessdouble(emotion.happiness) +
-                " \n neutral : " + excessdouble(emotion.neutral) +
-                " \n sadness : " +excessdouble(emotion.sadness) +
-                " \n surprise : " + excessdouble(emotion.surprise) +
+        txt_totalValue.setText(" anger : " + FUNCTION.excessdouble(totalEmotionValue.anger) +
+                " \n fear : " + FUNCTION.excessdouble(totalEmotionValue.fear) +
+                " \n happiness : " + FUNCTION.excessdouble(totalEmotionValue.happiness) +
+                " \n neutral : " + FUNCTION.excessdouble(totalEmotionValue.neutral) +
+                " \n sadness : " + FUNCTION.excessdouble(totalEmotionValue.sadness) +
+                " \n surprise : " + FUNCTION.excessdouble(totalEmotionValue.surprise) +
                 "\n image_GPS_LONG : " + gps_longtitude +
                 "\n image_GPS_LA : " + gps_latitude);
+        txt_emotionValue.setText(" anger : " + FUNCTION.excessdouble(emotion.anger) +
+                " \n fear : " + FUNCTION.excessdouble(emotion.fear) +
+                " \n happiness : " + FUNCTION.excessdouble(emotion.happiness) +
+                " \n neutral : " + FUNCTION.excessdouble(emotion.neutral) +
+                " \n sadness : " + FUNCTION.excessdouble(emotion.sadness) +
+                " \n surprise : " + FUNCTION.excessdouble(emotion.surprise) );
+
+        txt_backValue.setText(" Vitality : " +(backValue.getVitality()) +
+                " \n Temperature : " +(backValue.getTemperature()) +
+                " \n Mordernity : " + (backValue.getModernity()));
     }
 
-    public void backAnalysis(Bitmap image_bitmap){
+    public void backAnalysis(Bitmap image_bitmap, Emotion emotionValue){ // 배경 분석
 
-        ImageAlgo imageAlgo_to_value = new ImageAlgo(image_bitmap);
-        ImageStat imageStat =imageAlgo_to_value.analysis();
-        ImageAlgo imageAlgo_to_analysis = new ImageAlgo(imageStat, emotion);
+        ImageAlgo imageAlgo_to_analysis = new ImageAlgo(image_bitmap, emotion);
 
         emotion = imageAlgo_to_analysis.emotion;
+        backValue = imageAlgo_to_analysis.backgroundValue;
+        totalEmotionValue = imageAlgo_to_analysis.totalValue;
+
 
         show();
 
@@ -276,6 +263,8 @@ public class Exam extends AppCompatActivity {
         cursor.moveToFirst();
         return cursor.getString(columnIndex);
     }
+
+
     public void exiF(Intent data, String name_Str){
         String str = getPath(data.getData());
         ExifInterface exif = null;
@@ -287,4 +276,13 @@ public class Exam extends AppCompatActivity {
         }
 
     }
+
+    private void showExif(ExifInterface exif){
+        gps_latitude = getTagString(ExifInterface.TAG_GPS_LATITUDE,exif);
+        gps_longtitude = getTagString(ExifInterface.TAG_GPS_LONGITUDE,exif);
+    }
+    private String getTagString(String tag, ExifInterface exif){
+        return (tag + " : " + exif.getAttribute(tag) + "\n");
+    }
+
 }

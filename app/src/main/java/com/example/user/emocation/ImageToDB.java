@@ -43,7 +43,6 @@ import java.io.IOException;
  */
 
 public class ImageToDB {
-    private LocationData locationData;
     private Picture picture;
     private String image_name = null;
     private FirebaseStorage storage = FirebaseStorage.getInstance();
@@ -56,19 +55,18 @@ public class ImageToDB {
 
     public ImageToDB(){}
 
-    public ImageToDB(Uri imageUri, LocationData locationData, Picture picture, String image_name){
+    public ImageToDB(Uri imageUri, Picture picture, String image_name){
         this.imageUri = imageUri;
-        this.locationData = locationData;
         this.picture = picture;
         this.image_name = image_name;
     }
 
     public void saveToFirebase(){
-        saveImageDB(locationData,picture);
+        saveImageDB(picture);
         uploadFile(imageUri,image_name);
     }
 
-    private void saveImageDB(LocationData locationData, Picture picture){ //locationData 안에 picture가 있으니 좀 더 생각해 볼 것
+    private void saveImageDB(Picture picture){ //locationData 안에 picture가 있으니 좀 더 생각해 볼 것
         mDatabase = FirebaseDatabase.getInstance().getReference();
         mDatabase.child("EmocationImg").child(image_name).setValue(picture);
     }
@@ -80,13 +78,13 @@ public class ImageToDB {
         uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
             @Override
             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-               // Toast.makeText(getApplicationContext(),"성공",Toast.LENGTH_SHORT).show();
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
-               // Toast.makeText(getApplicationContext(),"실패",Toast.LENGTH_SHORT).show();
             }
         });
     }
+
+
 }
