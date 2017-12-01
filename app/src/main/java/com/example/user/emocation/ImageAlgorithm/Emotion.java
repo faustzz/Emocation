@@ -19,7 +19,15 @@ public class Emotion{
 		this.sadness = sad;
 		this.surprise = sur;
 	}
-	public Emotion() {
+	public Emotion(Emotion that){	//copy constructor
+		this.anger=that.anger;
+		this.fear=that.fear;
+		this.happiness = that.happiness;
+		this.neutral = that.neutral;
+		this.sadness = that.sadness;
+		this.surprise = that.surprise;
+	}
+	public Emotion() {	//default constructor
 		this.anger=0.0;
 		this.fear=0.0;
 		this.happiness = 0.0;
