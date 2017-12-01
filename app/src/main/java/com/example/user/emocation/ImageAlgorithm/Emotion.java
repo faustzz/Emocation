@@ -11,7 +11,7 @@ public class Emotion{
 	public 	double sadness;
 	public 	double surprise;
 
-	public Emotion(double a, double f,double h,double n,double sad,double sur) {
+	public Emotion(double a, double f,double h,double n,double sad,double sur) {	//constructor
 		this.anger=a;
 		this.fear=f;
 		this.happiness = h;
@@ -28,7 +28,7 @@ public class Emotion{
 		this.surprise = 0.0;
 	}
 
-	public void addEmotionValue(Emotion that) {
+	public void addEmotionValue(Emotion that) {	//add each emotions to original one.
 
 		this.anger += that.anger;
 		this.fear += that.fear;
@@ -36,41 +36,11 @@ public class Emotion{
 		this.neutral += that.neutral;
 		this.sadness += that.sadness;
 		this.surprise += that.surprise;
-
-		if(this.anger > 1.0)
-			this.anger = 1.0;
-		else if(this.anger<0)
-			this.anger = 0;
-
-		if(this.fear > 1.0)
-			this.fear = 1.0;
-		else if(this.fear<0)
-			this.fear = 0;
-
-		if(this.happiness > 1.0)
-			this.happiness = 1.0;
-		else if(this.happiness<0)
-			this.happiness = 0;
-
-		if(this.neutral > 1.0)
-			this.neutral = 1.0;
-		else if(this.neutral<0)
-			this.neutral = 0;
-
-		if(this.sadness > 1.0)
-			this.sadness = 1.0;
-		else if(this.sadness<0)
-			this.sadness = 0;
-
-		if(this.surprise > 1.0)
-			this.surprise = 1.0;
-		else if(this.surprise<0)
-			this.surprise = 0;
-
+		
 		adjVal();
 	}
 
-	public void mulEmotionValue(double val) {
+	public void mulEmotionValue(double val) {	//multiply all emotion value by input
 
 		this.anger *= val;
 		this.fear *= val;
@@ -82,7 +52,7 @@ public class Emotion{
 		adjVal();
 	}
 
-	private void adjVal() {
+	private void adjVal() {		//adjust each values to be bigger than 0 and smaller than 1.
 		if(this.anger > 1.0)
 			this.anger = 1.0;
 		else if(this.anger<0)
