@@ -23,15 +23,17 @@ public class ImageAlgo {
     */
     TextView textView;
     Bitmap bitmap;
-//    private Emotion emotion;
-    private BGvalue backgroundValue;   
+    private Emotion emotion;
+    private BGvalue backgroundValue; 
+    private Emotion totalValue;
 
     public ImageAlgo(){
 
     }
 
-    public ImageAlgo(Bitmap bitmap) {
+    public ImageAlgo(Bitmap bitmap, Emotion emotion) {
         this.bitmap = bitmap;
+        this.emotion = emotion;
         ImageStat status = analysis();
         backgroundValue = new BGvalue();
         AdjByMainColor(status.getMainColors());
@@ -40,15 +42,8 @@ public class ImageAlgo {
         AdjByTemperature(status.getTemp());
     }
 
-//    public ImageAlgo(ImageStat status, Emotion emotion) {
-//        this.emotion = emotion;
-//        backgroundValue = new BGvalue();
-//        AdjByMainColor(status.getMainColors());
-//        AdjByContrast(status.getContrast(status.getHisto(0)));
-//        AdjBySaturation(status.getSaturation());
-//        AdjByTemperature(status.getTemp());
-//    }
-
+    
+    
 
     public ImageStat analysis(){        //analize the img to find some information about img
         ImageStat imgstat = null;
@@ -126,11 +121,15 @@ public class ImageAlgo {
         backgroundValue.add(new BGvalue(vital,tempo,mordern));
     }
 
-//    public Emotion getEmotion() {
-//        return emotion;
-//    }
+    public Emotion getEmotion() {
+        return emotion;
+    }
 
     public BGvalue getBackgroundValue() {
         return backgroundValue;
+    }
+    
+    public BGvalue getTotalValue() {
+        return totalValue;
     }
 }
