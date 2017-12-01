@@ -13,13 +13,14 @@ public class ImageStat{
 
 	static int[] primaryColors = {Color.RED, Color.YELLOW, Color.GREEN, Color.BLUE, Color.WHITE,Color.BLACK,Color.rgb(128,0,255), Color.rgb(150,75,0)};
 	static String[] colorNames = {"red","yellow","green","blue","white","black","purple","brown"};
-
-	private int width;
-	private int height;
-	private int numOfPixels;
-	private int [] histo_red,histo_green,histo_blue,histo_gray;
-	private double sat,br;
-	private double temperature;
+	//colors are declared static way since it is needless that every instance contains the whole colors.
+	
+	private int width;		//width of image
+	private int height;		//height of image
+	private int numOfPixels;	//numOfPixels of image
+	private int [] histo_red,histo_green,histo_blue,histo_gray;	//histograms of image
+	private double sat,br;		//saturation and brightness of image
+	private double temperature;	//temperature of image
 
 	private String [] mainColors = new String[3];	//0 is main color
 
