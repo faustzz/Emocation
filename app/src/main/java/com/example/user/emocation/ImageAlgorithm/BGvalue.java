@@ -10,20 +10,20 @@ public class BGvalue {
     private double mordernity;
 
 
-    public BGvalue(double v, double t, double m){
+    public BGvalue(double v, double t, double m){   //constructor
         vitality=v;
         temperature=t;
         mordernity=m;
     }
 
-    public BGvalue(){
+    public BGvalue(){   //default constructor
         vitality=0;
         temperature=0;
         mordernity=0;
     }
 
 
-    public void add(BGvalue t){
+    public void add(BGvalue t){     //add v,t,m value to original one.
 
         this.vitality += t.vitality;
         this.temperature += t.temperature;
