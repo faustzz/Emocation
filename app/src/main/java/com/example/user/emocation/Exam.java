@@ -1,12 +1,14 @@
 package com.example.user.emocation;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Matrix;
 import android.media.ExifInterface;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.MediaStore;
@@ -25,6 +27,8 @@ import com.example.user.emocation.ImageAlgorithm.ImageAlgo;
 import com.example.user.emocation.ImageAlgorithm.ImageStat;
 import com.example.user.emocation.ImageInfo.LocationData;
 import com.example.user.emocation.ImageInfo.Picture;
+import com.example.user.emocation.Loading.BaseActivity;
+import com.example.user.emocation.Loading.BaseApplication;
 import com.pixelcan.emotionanalysisapi.EmotionRestClient;
 import com.pixelcan.emotionanalysisapi.ResponseCallback;
 import com.pixelcan.emotionanalysisapi.models.FaceAnalysis;
@@ -45,7 +49,7 @@ import java.util.List;
  * Created by user on 2017-11-24.
  */
 
-public class Exam extends AppCompatActivity {
+public class Exam extends BaseActivity {
 
     //Layout
     private TextView txt_totalValue, txt_emotionValue, txt_backValue;
@@ -67,6 +71,7 @@ public class Exam extends AppCompatActivity {
     private String gps_latitude = null, gps_longtitude = null;
 
     private Functions FUNCTION = new Functions();
+    CheckTypesTask task = new CheckTypesTask();
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -129,12 +134,51 @@ public class Exam extends AppCompatActivity {
 
                 uri = data.getData();
                 exiF(data, selectedImageName);
+                ////////////////////////////////
+                task.execute();
+                ///////////////////////////////
                 retro(image_bitmap);
 
                 image_bitmap_analysis = image_bitmap;
             }
         }
     }
+
+    private class CheckTypesTask extends AsyncTask<Void, Void, Void> {
+
+        ProgressDialog asyncDialog = new ProgressDialog(
+                Exam.this);
+
+        @Override
+        protected void onPreExecute() {
+            asyncDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+            asyncDialog.setMessage("로딩중입니다..");
+
+            // show dialog
+            asyncDialog.show();
+            super.onPreExecute();
+        }
+
+        @Override
+        protected Void doInBackground(Void... arg0) {
+            try {
+                for (int i = 0; i < 5; i++) {
+                    //asyncDialog.setProgress(i * 30);
+                    Thread.sleep(100000);
+                }
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void result) {
+            asyncDialog.dismiss();
+            super.onPostExecute(result);
+        }
+    } // 종료 타이밍 잡기
+
 
     public Bitmap rotate(Bitmap bitmap, int degrees){
         Bitmap retBitmap = bitmap;

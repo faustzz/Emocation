@@ -30,12 +30,11 @@ import java.util.List;
  */
 
 public class GoogleMap extends FragmentActivity implements OnMapReadyCallback{
-    static LocationData locationData = new LocationData();
+    static LocationData locationData = new LocationData(); // dialog 버튼 -> activity로 이동할 때, Serialble된 object들이 중복으로 안넘어가는 이슈 때문에 static으로 설정
     static Picture picture;
     private DatabaseReference mDatabase; //DB 받아오기
     private MarkerDialog markerDialog;
     private Marker clickedmarker1;
-    private Marker clickedmarker2;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -64,7 +63,6 @@ public class GoogleMap extends FragmentActivity implements OnMapReadyCallback{
                     if(picture.getLatitute() != "null" || picture.getLongitude() != "null") {
                         LatLng position = new LatLng(convert(picture.getLatitute()), convert(picture.getLongitude())); // 위치가 같으면 마커가 중복되면서 이 전 마커가 사라짐
                         MarkerOptions markerOptions = new MarkerOptions();
-//                      markerOptions.title(picture.getImage_name());
                         markerOptions.position(position);
                         googleMap.addMarker(markerOptions).setTag(picture); // 마커 추가, 정보 숨김
                     }
@@ -97,7 +95,6 @@ public class GoogleMap extends FragmentActivity implements OnMapReadyCallback{
             @Override
             public boolean onMarkerClick(Marker marker) {
                 clickedmarker1 = marker;
-                clickedmarker2 = marker;
                 markerDialog = new MarkerDialog(GoogleMap.this, ImageClickListener, LocationClickListener);
                 markerDialog.show();
 
@@ -107,26 +104,24 @@ public class GoogleMap extends FragmentActivity implements OnMapReadyCallback{
     }
     private View.OnClickListener ImageClickListener = new View.OnClickListener() {
         @Override
-        public void onClick(View v) {
+        public void onClick(View v) { // dialog 현 위치 사진 보기
             Toast.makeText(getApplicationContext(), "Image Click!!", Toast.LENGTH_SHORT).show();
             Intent intent = new Intent(getApplicationContext(), MarkerImageActivity.class);
 
-            picture = (Picture)clickedmarker1.getTag();
-
+            picture = (Picture)clickedmarker1.getTag(); // 마커의 정보를 받아온다.
             Toast.makeText(getApplicationContext(),picture.getImage_name(),Toast.LENGTH_SHORT).show();
-            intent.putExtra("title",picture);
+            intent.putExtra("title",picture); // 마커의 정보를 전달
 
             startActivity(intent);
         }
     };
 
-    private View.OnClickListener LocationClickListener = new View.OnClickListener() {
+    private View.OnClickListener LocationClickListener = new View.OnClickListener() { // dialog 주변 위치 사진 보기
         @Override
         public void onClick(View v) {
             Toast.makeText(getApplicationContext(), "Location Click!!", Toast.LENGTH_SHORT).show();
             Intent intent = new Intent(getApplicationContext(), MarkerLocationActivity.class);
 
-            picture = (Picture)clickedmarker2.getTag();
 
             Toast.makeText(getApplicationContext(),picture.getImage_name(),Toast.LENGTH_SHORT).show();
             //intent.putExtra("title2 ",picture);
