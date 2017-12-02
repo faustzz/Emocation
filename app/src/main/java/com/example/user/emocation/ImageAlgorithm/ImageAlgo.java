@@ -96,8 +96,8 @@ public class ImageAlgo {
                 temp.neutral += (0.03 / i);
                 temp.fear += (0.01 / i);
             } else if (mainColors[i - 1].compareTo("black") == 0) {
-                vital -= (0.03 / i);
-                tempo -= (0.05 / i);
+                vital -= (0.02 / i);
+                tempo -= (0.03 / i);
                 mordern += (0.03 / i);
                 temp.fear += (0.05 / i);
                 temp.sadness += (0.01 / i);
@@ -155,9 +155,9 @@ public class ImageAlgo {
         double vital=0,tempo=t/10,mordern=0;
         Emotion temp = new Emotion();
         
-        temp.anger -= (t / 10);
-        temp.sadness -= (t / 10);
-        temp.fear -= (t / 10);
+        temp.anger -= (t / 1000);
+        temp.sadness -= (t / 1000);
+        temp.fear -= (t / 1000);
         
         backgroundValue.add(new BGvalue(vital,tempo,mordern));
         totalValue.addEmotionValue(temp);
