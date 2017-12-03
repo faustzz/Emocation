@@ -93,16 +93,20 @@ public class ImageStat{
 
 		//3. find 3 main colors
 		//using selection sort for only first 3 elements.
+		String[] tempNames = colorNames.clone();
 		for(int i=0;i<3;i++){
 			int min = i;
 			for(int j=i;j<diff.length;j++){
 				if(diff[min]>diff[j])
 					min=j;
 			}
-			mainColors[i] = colorNames[min];
+			mainColors[i] = tempNames[min];
 			long tmp = diff[i];
+			String s = tempNames[i];
 			diff[i] = diff[min];
+			tempNames[i] = tempNames[min];
 			diff[min] = tmp;
+			tempNames[min] = s;
 		}
 	}
 

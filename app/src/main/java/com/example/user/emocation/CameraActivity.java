@@ -1,6 +1,7 @@
 package com.example.user.emocation;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -14,6 +15,7 @@ import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
 import android.os.StrictMode;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore;
@@ -53,7 +55,7 @@ public class CameraActivity extends Activity {
     SharedPreferences mPref;
     //Layout
     private ImageButton capture = null;
-    private ImageView iv = null;
+    private ImageView iv = null, logo;
     private TextView txt_totalValue, txt_emotionValue, txt_backValue;
     private ImageButton btn_analysis;
 
@@ -63,13 +65,18 @@ public class CameraActivity extends Activity {
     private Emotion emotion; // 감정 분석값
     private BGvalue backValue; //배경 분석값
     private Emotion totalEmotionValue; // 배경 + 감정 분석 값
+    private boolean isEmotion = true;
 
     //image
-    private String gps_latitude = null, gps_longtitude = null; // gps의 위도, 경도 값을 저장
+    private String gps_latitude , gps_longtitude; // gps의 위도, 경도 값을 저장
     private Uri selectedImageUri;
     private Bitmap image_bitmap_analysis; // 분석된 사진
     private String selectedImageName;
     private Uri mCurrentPhotoPath;
+
+    //로딩창
+    private Handler mHandler;
+    private ProgressDialog mProgressDialog;
 
     private Functions FUNCTION = new Functions();
     @Override
@@ -78,6 +85,8 @@ public class CameraActivity extends Activity {
         setContentView(R.layout.activity_camera);
 
 
+
+        mHandler = new Handler(); // 로딩창 핸들러 생성
 
         setup(); // 버튼, 이미지 뷰 세팅
         capture.setOnClickListener(new View.OnClickListener() {
@@ -98,10 +107,15 @@ public class CameraActivity extends Activity {
             @Override
             public void onClick(View view) {
                 backAnalysis(image_bitmap_analysis, emotion); // 배경 분석을 하고
-                Picture picture = new Picture(gps_latitude, gps_longtitude, FUNCTION.subString(selectedImageName,"."), emotion);
-                ImageToDB imageToDB = new ImageToDB(selectedImageUri, picture, FUNCTION.subString(selectedImageName,"."));
-                imageToDB.saveToFirebase();
-                //setSharedPref(imageNumber);
+                if(gps_latitude.equals("null") || gps_longtitude.equals("null")) {
+                    Toast.makeText(getApplicationContext(),"위치정보가 없어 서버저장에 실패했습니다.",Toast.LENGTH_SHORT).show();
+                }
+                else{
+                    Picture picture = new Picture(gps_latitude, gps_longtitude, FUNCTION.subString(selectedImageName, "."), emotion);
+                    ImageToDB imageToDB = new ImageToDB(selectedImageUri, picture, FUNCTION.subString(selectedImageName, "."));
+                    imageToDB.saveToFirebase();
+                }
+
             }
         });
     }
@@ -129,25 +143,57 @@ public class CameraActivity extends Activity {
                     e.getStackTrace();
                 }
 
+                loading();
                 retro(imageBitmap);
                 image_bitmap_analysis = imageBitmap;
                 FUNCTION.saveExifFile(imageBitmap, photoPath);
+
+                logo.setVisibility(View.GONE);
+                iv.setVisibility(View.VISIBLE);
                 iv.setImageBitmap(imageBitmap); // ImageView에 사진을 넣음
 
             }
         }
     }
 
+    public void loading(){
+        runOnUiThread(new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                mProgressDialog = ProgressDialog.show(CameraActivity.this,"",
+                        "사진 분석 중입니다.",true);
+                mHandler.postDelayed( new Runnable()
+                {
+                    @Override
+                    public void run()
+                    {
+                        try
+                        {
+                            if (mProgressDialog!=null&&mProgressDialog.isShowing()){
+                                mProgressDialog.dismiss();
+                            }
+                        }
+                        catch ( Exception e )
+                        {
+                            e.printStackTrace();
+                        }
+                    }
+                }, 100000);
+            }
+        } );
+    }
     public void retro(Bitmap bitmap){ // EMOTION API통신
         EmotionRestClient.init(getApplicationContext(),"9070f1ed33494504aaf4a6918ed21a64");
         EmotionRestClient.getInstance().detect(bitmap, new ResponseCallback() {
             @Override
             public void onError(String errorMessage) {
                 Toast.makeText(getApplicationContext(),errorMessage,Toast.LENGTH_LONG).show();
-                txt_totalValue.setText(
-                        "\n image_GPS_LONG : " + gps_longtitude +
-                                "\n image_GPS_LA : " + gps_latitude) ;
+
+                mProgressDialog.dismiss();
                 emotion = new Emotion();
+                isEmotion = false;
             }
 
             @Override
@@ -165,13 +211,17 @@ public class CameraActivity extends Activity {
                     savaAvgScores[2] += scores[i].getDisgust();
                     savaAvgScores[3] += scores[i].getFear();
                     savaAvgScores[4] += scores[i].getHappiness();
-                    savaAvgScores[5] += scores[i].getNeutral();
+                    savaAvgScores[5] += scores[i].getNeutral()-0.5;
                     savaAvgScores[6] += scores[i].getSadness();
                     savaAvgScores[7] += scores[i].getSurprise();
                 }
 
-
-                emotion = new Emotion(savaAvgScores[0]/response.length, savaAvgScores[3]/response.length, savaAvgScores[4]/response.length, savaAvgScores[5]/response.length, savaAvgScores[6]/response.length, savaAvgScores[7]/response.length); // contemt, disgust 제외하고 저장
+                if(response.length == 0) { // 사진에 인물이 없으면
+                    emotion = new Emotion();
+                    isEmotion = false; // 사진에 인물이 없다
+                }else {
+                    emotion = new Emotion(savaAvgScores[0] / response.length, savaAvgScores[3] / response.length, savaAvgScores[4] / response.length, savaAvgScores[5] / response.length, savaAvgScores[6] / response.length, savaAvgScores[7] / response.length); // contemt, disgust 제외하고 저장
+                }
                 btn_analysis.performClick(); //retrofit sevice가 완벽히 이뤄지고나서 사진 분석을 실행한다.
 
             }
@@ -180,7 +230,7 @@ public class CameraActivity extends Activity {
 
 
     public String getTagString(String tag, ExifInterface exif){
-        return (tag + " : " + exif.getAttribute(tag) + "\n");
+        return (tag + " : " + exif.getAttribute(tag));
     }
 
     public void get_GPS_EXIF(String str){ // EXIF 정보에서 GPS값을 추출
@@ -190,8 +240,9 @@ public class CameraActivity extends Activity {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        gps_latitude = FUNCTION.subString(getTagString(ExifInterface.TAG_GPS_LATITUDE,exif),":");
-        gps_longtitude = FUNCTION.subString(getTagString(ExifInterface.TAG_GPS_LONGITUDE,exif),":");
+
+            gps_latitude = FUNCTION.subString(getTagString(ExifInterface.TAG_GPS_LATITUDE, exif), ":");
+            gps_longtitude = FUNCTION.subString(getTagString(ExifInterface.TAG_GPS_LONGITUDE, exif), ":");
     }
 
 
@@ -210,39 +261,42 @@ public class CameraActivity extends Activity {
     }
 
     public void show(){
-        txt_totalValue.setText(" anger : " + FUNCTION.excessdouble(totalEmotionValue.anger) +
-                " \n fear : " + FUNCTION.excessdouble(totalEmotionValue.fear) +
-                " \n happiness : " + FUNCTION.excessdouble(totalEmotionValue.happiness) +
-                " \n neutral : " + FUNCTION.excessdouble(totalEmotionValue.neutral) +
-                " \n sadness : " + FUNCTION.excessdouble(totalEmotionValue.sadness) +
-                " \n surprise : " + FUNCTION.excessdouble(totalEmotionValue.surprise) +
-                "\n image_GPS_LONG : " + gps_longtitude +
-                "\n image_GPS_LA : " + gps_latitude);
-        txt_emotionValue.setText(" anger : " + FUNCTION.excessdouble(emotion.anger) +
-                " \n fear : " + FUNCTION.excessdouble(emotion.fear) +
-                " \n happiness : " + FUNCTION.excessdouble(emotion.happiness) +
-                " \n neutral : " + FUNCTION.excessdouble(emotion.neutral) +
-                " \n sadness : " + FUNCTION.excessdouble(emotion.sadness) +
-                " \n surprise : " + FUNCTION.excessdouble(emotion.surprise) );
-
+        if(isEmotion) {
+            Emotion realValue = FUNCTION.showRealValue(totalEmotionValue); // 산출값 * 1000
+            txt_totalValue.setText(" anger : " + Math.round(realValue.anger) +
+                    " \n fear : " + Math.round(realValue.fear) +
+                    " \n happiness : " + Math.round(realValue.happiness) +
+                    " \n neutral : " + Math.round(realValue.neutral) +
+                    " \n sadness : " + Math.round(realValue.sadness) +
+                    " \n surprise : " + Math.round(realValue.surprise));
+            txt_emotionValue.setText(" anger : " + FUNCTION.excessdouble(emotion.anger) +
+                    " \n fear : " + FUNCTION.excessdouble(emotion.fear) +
+                    " \n happiness : " + FUNCTION.excessdouble(emotion.happiness) +
+                    " \n neutral : " + FUNCTION.excessdouble(emotion.neutral) +
+                    " \n sadness : " + FUNCTION.excessdouble(emotion.sadness) +
+                    " \n surprise : " + FUNCTION.excessdouble(emotion.surprise));
+        }
         txt_backValue.setText(" Vitality : " +(backValue.getVitality()) +
                 " \n Temperature : " +(backValue.getTemperature()) +
                 " \n Mordernity : " + (backValue.getModernity()));
+        isEmotion = true; // 초기화
     }
 
     public void backAnalysis(Bitmap image_bitmap, Emotion emotionValue){ // 배경 분석
 
-        ImageAlgo imageAlgo_to_analysis = new ImageAlgo(image_bitmap, emotion);
+        ImageAlgo imageAlgo_to_analysis = new ImageAlgo(image_bitmap, emotionValue);
 
         emotion = imageAlgo_to_analysis.emotion;
         backValue = imageAlgo_to_analysis.backgroundValue;
         totalEmotionValue = imageAlgo_to_analysis.totalValue;
 
+        mProgressDialog.dismiss();
         show();
 
     }
 
     private void setup(){ // layout 설정
+        logo = (ImageView)findViewById(R.id.logo);
         capture = (ImageButton)findViewById(R.id.btn);
         btn_analysis = (ImageButton)findViewById(R.id.start_analysis);
         iv = (ImageView)findViewById(R.id.iv);

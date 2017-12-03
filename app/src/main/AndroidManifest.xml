@@ -7,6 +7,8 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"></uses-permission>
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"></uses-permission>
     <uses-permission android:name="android.permission.CAMERA"/>
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"></uses-permission>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"></uses-permission>
     <application
         android:allowBackup="true"
         android:icon="@drawable/logo1"
@@ -23,12 +25,13 @@
             </intent-filter>
         </activity>
         <activity android:name=".LoginActivity"/>
+
         <activity android:name=".CameraActivity"/>
-        <activity android:name=".Exam"/>
+        <activity android:name=".FromGalleryActivity"/>
         <activity android:name=".MainActivity"/>
-        <activity android:name=".GoogleMap"/>
-        <activity android:name=".MarkerImageActivity"/>
-        <activity android:name=".MarkerLocationActivity"/>
+        <activity android:name=".Map.GoogleMapActivity"/>
+        <activity android:name=".Map.MarkerImageActivity"/>
+        <activity android:name=".Map.MarkerLocationActivity"/>
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"

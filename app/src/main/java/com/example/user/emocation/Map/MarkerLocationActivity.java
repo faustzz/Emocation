@@ -1,29 +1,23 @@
-package com.example.user.emocation;
+package com.example.user.emocation.Map;
 
 import android.app.Activity;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.net.Uri;
 import android.os.Bundle;
-import android.provider.MediaStore;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.util.Log;
-import android.view.View;
-import android.widget.AdapterView;
-import android.widget.Button;
 import android.widget.GridView;
+import android.widget.TextView;
 
+import com.example.user.emocation.Functions;
 import com.example.user.emocation.ImageInfo.LocationData;
 import com.example.user.emocation.ImageInfo.Picture;
-import com.google.android.gms.tasks.OnFailureListener;
+import com.example.user.emocation.R;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.storage.FileDownloadTask;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -34,9 +28,12 @@ import java.util.List;
 
 public class MarkerLocationActivity extends Activity {
     private double latitude, longitude;
+    private double avgAnger = 0, avgFear = 0, avgHappiness = 0, avgNeutral = 0, avgSadness = 0, avgSurprise = 0;
+    private int numOfLocationImages = 0;
     private Functions FUNCTION = new Functions();
 
-    LocationData locationData = GoogleMap.locationData;
+    TextView txt_avgEmotion;
+    LocationData locationData = GoogleMapActivity.locationData;
     List<Bitmap> dd = new ArrayList<>();
     FirebaseStorage storage = FirebaseStorage.getInstance();
     StorageReference storageRef = storage.getReference("emocation/");
@@ -47,16 +44,22 @@ public class MarkerLocationActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_location_images);
 
-        Picture picture = GoogleMap.picture;
+        Picture picture = GoogleMapActivity.picture;
 
         latitude = convert(picture.getLatitute());
         longitude = convert(picture.getLongitude());
-
+        txt_avgEmotion = (TextView)findViewById(R.id.txt_avgEmotion);
         try {
             loadImages();
         } catch (IOException e) {
             e.printStackTrace();
         }
+        txt_avgEmotion.setText(" anger : " + FUNCTION.excessdouble(avgAnger) +
+                " \n fear : " + FUNCTION.excessdouble(avgFear) +
+                " \n happiness : " + FUNCTION.excessdouble(avgHappiness) +
+                " \n neutral : " + FUNCTION.excessdouble(avgNeutral) +
+                " \n sadness : " + FUNCTION.excessdouble(avgSadness) +
+                " \n surprise : " + FUNCTION.excessdouble(avgSurprise));
 
     }
 
@@ -65,6 +68,13 @@ public class MarkerLocationActivity extends Activity {
             double isINlatitude = convert(locationData.getPicture().get(i).getLatitute());
             double isINlongitude = convert(locationData.getPicture().get(i).getLongitude());
             if (isIN(latitude, longitude, isINlatitude, isINlongitude)) {
+                avgAnger += locationData.getPicture().get(i).getEmotion().anger;
+                avgFear += locationData.getPicture().get(i).getEmotion().fear;
+                avgHappiness += locationData.getPicture().get(i).getEmotion().happiness;
+                avgNeutral += locationData.getPicture().get(i).getEmotion().neutral;
+                avgSadness += locationData.getPicture().get(i).getEmotion().sadness;
+                avgSurprise += locationData.getPicture().get(i).getEmotion().surprise;
+                numOfLocationImages++;
                 final File localFile = File.createTempFile("images", "jpeg");
                 storageRef.child(locationData.getPicture().get(i).getImage_name()).getFile(localFile).addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
                     @Override
@@ -80,6 +90,12 @@ public class MarkerLocationActivity extends Activity {
 
             }
         }
+        avgAnger/=numOfLocationImages; // 위치 점위 안에 해당하는 사진들으 emotion 값들의 평균
+        avgFear/=numOfLocationImages;
+        avgHappiness/=numOfLocationImages;
+        avgNeutral/=numOfLocationImages;
+        avgSadness/=numOfLocationImages;
+        avgSurprise/=numOfLocationImages;
     }
 
     public boolean isIN(double latitude, double longitude, double isINlatitude, double isINlongitude){

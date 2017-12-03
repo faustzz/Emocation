@@ -17,10 +17,10 @@ import java.util.Arrays;
 
 public class ImageAlgo {
     /*
-    This class determines 3 values about total picture and adjust emtion values which is input to get final emtion value.
-    It is about the (total/average) vitality, temporature, mordernity of input picture.
-    The calculation result is stored in this class as 'backgroundValue' and 'totalValue'.
-    */
+ This class determines 3 values about total picture and adjust emtion values which is input to get final emtion value.
+ It is about the (total/average) vitality, temporature, mordernity of input picture.
+ The calculation result is stored in this class as 'backgroundValue' and 'totalValue'.
+ */
     TextView textView;
     Bitmap bitmap;
     public Emotion emotion;
@@ -67,41 +67,41 @@ public class ImageAlgo {
                 vital += (0.04 / i);
                 tempo += (0.02 / i);
                 mordern -= (0.02 / i);
-                temp.anger += (0.04 / i);
-                temp.fear += (0.02 / i);
-                temp.sadness -= (0.02 / i);
+                temp.anger += (0.004 / i);
+                temp.fear += (0.002 / i);
+                temp.sadness -= (0.002 / i);
             } else if (mainColors[i - 1].compareTo("yellow") == 0) {
                 vital += (0.04 / i);
                 tempo += (0.04 / i);
                 mordern -= (0.03 / i);
-                temp.happiness += (0.02 / i);
-                temp.surprise += (0.04 / i);
+                temp.happiness += (0.002 / i);
+                temp.surprise += (0.004 / i);
             } else if (mainColors[i - 1].compareTo("green") == 0) {
                 vital += (0.02 / i);
                 tempo -= (0.03 / i);
-                mordern -= (0.04 / i);
-                temp.anger -= (0.03 / i);
-                temp.neutral += (0.05 / i);
-                temp.happiness += (0.02 / i);
+                mordern -= (0.02 / i);
+                temp.anger -= (0.003 / i);
+                temp.neutral += (0.005 / i);
+                temp.happiness += (0.002 / i);
             } else if (mainColors[i - 1].compareTo("blue") == 0) {
                 vital -= (0.03 / i);
                 tempo -= (0.05 / i);
-                mordern -= (0.03 / i);
-                temp.neutral += (0.05 / i);
-                temp.sadness += (0.02 / i);
+                mordern -= (0.01 / i);
+                temp.neutral += (0.005 / i);
+                temp.sadness += (0.002 / i);
             } else if (mainColors[i - 1].compareTo("white") == 0) {
                 vital += (0.01 / i);
                 tempo -= (0.04 / i);
                 mordern += (0.03 / i);
-                temp.neutral += (0.03 / i);
-                temp.fear += (0.01 / i);
+                temp.neutral += (0.003 / i);
+                temp.fear += (0.001 / i);
             } else if (mainColors[i - 1].compareTo("black") == 0) {
-                vital -= (0.03 / i);
-                tempo -= (0.05 / i);
+                vital -= (0.02 / i);
+                tempo -= (0.03 / i);
                 mordern += (0.03 / i);
-                temp.fear += (0.05 / i);
-                temp.sadness += (0.01 / i);
-                temp.neutral += (0.01 / i);
+                temp.fear += (0.005 / i);
+                temp.sadness += (0.001 / i);
+                temp.neutral += (0.001 / i);
             }
 //			else if(mainColors[i-1].compareTo("gray") == 0){
 //
@@ -109,16 +109,16 @@ public class ImageAlgo {
             else if (mainColors[i - 1].compareTo("purple") == 0) {
                 vital += (0.01 / i);
                 tempo -= (0.02 / i);
-                mordern += (0.02 / i);
-                temp.sadness += (0.05 / i);
-                temp.surprise += (0.02 / i);
-                temp.fear += (0.01 / i);
+                mordern -= (0.03 / i);
+                temp.sadness += (0.005 / i);
+                temp.surprise += (0.002 / i);
+                temp.fear += (0.001 / i);
             } else if (mainColors[i - 1].compareTo("brown") == 0) {
                 vital -= (0.05 / i);
                 tempo += (0.03 / i);
-                mordern -= (0.03 / i);
-                temp.neutral += (0.06 / i);
-                temp.happiness += (0.02 / i);
+                mordern -= (0.02 / i);
+                temp.neutral += (0.004 / i);
+                temp.happiness += (0.002 / i);
             }
         }
 
@@ -133,8 +133,8 @@ public class ImageAlgo {
         vital -= (1-contrast)/10;
         tempo += (contrast-0.5)/10;
         mordern += (1-contrast)/10;
-        temp.happiness += (0.03 * contrast);
-        temp.surprise += (0.01 * contrast);
+        temp.happiness += (0.003 * contrast);
+        temp.surprise += (0.001 * contrast);
 
         backgroundValue.add(new BGvalue(vital,tempo,mordern));
         totalValue.addEmotionValue(temp);
@@ -152,12 +152,12 @@ public class ImageAlgo {
     }
 
     private void AdjByTemperature(double t) {   //modify backgroundValue by temperature that is obtained by analizing
-        double vital=0,tempo=t/10,mordern=0;
+        double vital=0,tempo=t/100,mordern=0;
         Emotion temp = new Emotion();
 
-        temp.anger -= (t / 10);
-        temp.sadness -= (t / 10);
-        temp.fear -= (t / 10);
+        temp.anger -= (t / 1000);
+        temp.sadness -= (t / 1000);
+        temp.fear -= (t / 1000);
 
         backgroundValue.add(new BGvalue(vital,tempo,mordern));
         totalValue.addEmotionValue(temp);

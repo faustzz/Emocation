@@ -1,4 +1,4 @@
-package com.example.user.emocation;
+package com.example.user.emocation.Map;
 
 import android.app.Dialog;
 import android.app.DialogFragment;
@@ -12,11 +12,13 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.Button;
 
+import com.example.user.emocation.R;
+
 /**
  * Created by Joo Hyun Jun on 2017-12-02.
  */
 
-public class MarkerDialog extends Dialog {
+public class MarkerDialog extends Dialog { // 마커 클릭시 뜨는 다이알로그
     private Button btn1, btn2;
     private View.OnClickListener image, location;
 

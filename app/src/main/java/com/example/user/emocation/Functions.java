@@ -8,6 +8,8 @@ import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
 
+import com.example.user.emocation.ImageAlgorithm.Emotion;
+
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -130,5 +132,15 @@ public class Functions { // 자주쓰는 함수들 모아논 class
         return retBitmap;
     }
 
+    public Emotion showRealValue(Emotion emotion){
+        emotion.anger = emotion.anger * 10000;
+        emotion.fear = emotion.fear * 10000;
+        emotion.happiness = emotion.happiness * 10000;
+        emotion.neutral = emotion.neutral * 10000;
+        emotion.sadness = emotion.sadness * 10000;
+        emotion.surprise = emotion.surprise * 10000;
+
+        return emotion;
+    }
 
 }

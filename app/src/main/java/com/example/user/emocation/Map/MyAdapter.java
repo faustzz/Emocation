@@ -1,4 +1,4 @@
-package com.example.user.emocation;
+package com.example.user.emocation.Map;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -23,7 +23,7 @@ import java.util.List;
  * Created by user on 2017-12-02.
  */
 
-public class MyAdapter extends BaseAdapter {
+public class MyAdapter extends BaseAdapter { // 사진들을gridview에 보여줄 어댑터
 
     Context context = null;
 

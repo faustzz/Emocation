@@ -1,4 +1,4 @@
-package com.example.user.emocation;
+package com.example.user.emocation.Map;
 
 import android.app.Activity;
 import android.graphics.Bitmap;
@@ -9,11 +9,16 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.example.user.emocation.Functions;
+import com.example.user.emocation.ImageAlgorithm.Emotion;
+import com.example.user.emocation.ImageInfo.LocationData;
 import com.example.user.emocation.ImageInfo.Picture;
+import com.example.user.emocation.R;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.storage.FileDownloadTask;
@@ -33,6 +38,7 @@ public class MarkerImageActivity extends Activity {
     Functions FUNCTION = new Functions();
     Picture picture = new Picture();
     private ImageView imageView;
+    private TextView txt_avgEmotion;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -40,6 +46,7 @@ public class MarkerImageActivity extends Activity {
         setContentView(R.layout.activity_marker_image);
 
         imageView = (ImageView)findViewById(R.id.imageView);
+        txt_avgEmotion = (TextView)findViewById(R.id.txt_avgEmotion);
 
         Bundle bundle = getIntent().getExtras();
         picture = bundle.getParcelable("title");
@@ -49,7 +56,13 @@ public class MarkerImageActivity extends Activity {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
+        Emotion realValue = FUNCTION.showRealValue(picture.getEmotion()); // 산출값 * 1000
+        txt_avgEmotion.setText(" anger : " + Math.round(realValue.anger) +
+                " \n fear : " + Math.round(realValue.fear) +
+                " \n happiness : " + Math.round(realValue.happiness) +
+                " \n neutral : " + Math.round(realValue.neutral) +
+                " \n sadness : " + Math.round(realValue.sadness) +
+                " \n surprise : " + Math.round(realValue.surprise));
 
     }
 

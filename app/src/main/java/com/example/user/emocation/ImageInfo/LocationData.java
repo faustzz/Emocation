@@ -16,7 +16,6 @@ import java.util.Map;
 
 public class LocationData implements Parcelable {
      List<Picture> picture = new ArrayList<Picture>(); // 사진 정보
-     Map<String, Uri> locate = new HashMap<String,Uri>(); // 각 위치 사진의 uri 정보
 
     public LocationData(){}
 
@@ -43,13 +42,7 @@ public class LocationData implements Parcelable {
         this.picture.add(picture);
     }
 
-    public Map<String, Uri> getLocate() {
-        return locate;
-    }
 
-    public void setLocate(String imageName, Uri uri) {
-        this.locate.put(imageName,uri);
-    }
 
     @Override
     public int describeContents() {
@@ -59,6 +52,5 @@ public class LocationData implements Parcelable {
     @Override
     public void writeToParcel(Parcel parcel, int i) {
         parcel.writeList(picture);
-        parcel.writeMap(locate);
     }
 }
