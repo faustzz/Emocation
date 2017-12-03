@@ -27,7 +27,7 @@ public class ImageAlgo {
     public Emotion totalValue;
     private String BGConclusion;
 
-    public ImageAlgo(){
+    public ImageAlgo() {
 
     }
 
@@ -47,7 +47,7 @@ public class ImageAlgo {
     }
 
 
-    public ImageStat analysis(){        //analize the img to find some information about img
+    public ImageStat analysis() {        //analize the img to find some information about img
         ImageStat imgstat = null;
         try {
             imgstat = new ImageStat(bitmap);
@@ -58,27 +58,27 @@ public class ImageAlgo {
     }
 
 
-    private String BGconclude(){
+    private String BGconclude() {
         double threshold = 0.03;
-        double av=Math.abs(backgroundValue.getVitality()),
-                at=Math.abs(backgroundValue.getTemperature()-0.05),
-                am=Math.abs(backgroundValue.getModernity());
+        double av = Math.abs(backgroundValue.getVitality()),
+                at = Math.abs(backgroundValue.getTemperature() - 0.05),
+                am = Math.abs(backgroundValue.getModernity());
 
-        double max = Math.max(Math.max(av,at),am);
-        if(max < threshold){
+        double max = Math.max(Math.max(av, at), am);
+        if (max < threshold) {
             return "What a Boring Picture... ";
-        }else if(max == av) {
-            if(backgroundValue.getVitality() > 0)
+        } else if (max == av) {
+            if (backgroundValue.getVitality() > 0)
                 return "The picture looks VIGOROUS! Hoooo wooo!";
             else
                 return "The picture looks CALM... ha-um";
-        }else if(max == at){
-            if(backgroundValue.getTemperature() > 0)
+        } else if (max == at) {
+            if (backgroundValue.getTemperature() > 0)
                 return "The picture looks WARM~ It made my heart warm too*_*";
             else
                 return "The picture looks COLD... Is that cold out there?";
-        }else if(max == am){
-            if(backgroundValue.getModernity() > 0)
+        } else if (max == am) {
+            if (backgroundValue.getModernity() > 0)
                 return "The picture looks MORDERN. By the way, have you ever been to Chicago? ";
             else
                 return "The picture looks NATURAL! You healed me :)";
@@ -88,7 +88,7 @@ public class ImageAlgo {
 
     private void AdjByMainColor(String[] mainColors) {
         //modify backgroundValue and total emotion value by main 3 colors that is obtained by analizing
-        double vital=0,tempo=0,mordern=0;
+        double vital = 0, tempo = 0, mordern = 0;
         Emotion temp = new Emotion();
 
         for (int i = 1; i < 4; i++) {
@@ -151,44 +151,44 @@ public class ImageAlgo {
             }
         }
 
-        backgroundValue.add(new BGvalue(vital,tempo,mordern));
+        backgroundValue.add(new BGvalue(vital, tempo, mordern));
         totalValue.addEmotionValue(temp);
     }
 
     private void AdjByContrast(double contrast) {   //modify backgroundValue by contrast that is obtained by analizing
-        double vital=0,tempo=0,mordern=0;
+        double vital = 0, tempo = 0, mordern = 0;
         Emotion temp = new Emotion();
 
-        vital -= (1-contrast)/10;
-        tempo += (contrast-0.5)/10;
-        mordern += (1-contrast)/10;
+        vital -= (1 - contrast) / 10;
+        tempo += (contrast - 0.5) / 10;
+        mordern += (1 - contrast) / 10;
         temp.happiness += (0.003 * contrast);
         temp.surprise += (0.001 * contrast);
 
-        backgroundValue.add(new BGvalue(vital,tempo,mordern));
+        backgroundValue.add(new BGvalue(vital, tempo, mordern));
         totalValue.addEmotionValue(temp);
     }
 
     private void AdjBySaturation(double saturation) {   //modify backgroundValue by saturation that is obtained by analizing
-        double vital=0,tempo=0,mordern=0;
+        double vital = 0, tempo = 0, mordern = 0;
 
-        vital -= (1-saturation)/10;
-        tempo -= saturation/100;
-        mordern += saturation/10;
+        vital -= (1 - saturation) / 10;
+        tempo -= saturation / 100;
+        mordern += saturation / 10;
 
-        backgroundValue.add(new BGvalue(vital,tempo,mordern));
+        backgroundValue.add(new BGvalue(vital, tempo, mordern));
         totalValue.mulEmotionValue(saturation);
     }
 
     private void AdjByTemperature(double t) {   //modify backgroundValue by temperature that is obtained by analizing
-        double vital=0,tempo=t/100,mordern=0;
+        double vital = 0, tempo = t / 100, mordern = 0;
         Emotion temp = new Emotion();
 
         temp.anger -= (t / 1000);
         temp.sadness -= (t / 1000);
         temp.fear -= (t / 1000);
 
-        backgroundValue.add(new BGvalue(vital,tempo,mordern));
+        backgroundValue.add(new BGvalue(vital, tempo, mordern));
         totalValue.addEmotionValue(temp);
     }
 
@@ -204,5 +204,7 @@ public class ImageAlgo {
         return totalValue;
     }
 
-    public String getBGConclusion(){ return BGConclusion;}
+    public String getBGConclusion() {
+        return BGConclusion;
+    }
 }
