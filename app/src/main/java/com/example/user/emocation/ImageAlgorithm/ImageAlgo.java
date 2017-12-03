@@ -40,7 +40,7 @@ public class ImageAlgo {
         totalValue = new Emotion(emotion);
         
         AdjByMainColor(status.getMainColors());
-        AdjByContrast(status.getContrast(status.getHisto(0)));
+        AdjByContrast(status.getContrast(status.getHisto(0));
         AdjByTemperature(status.getTemp());
         AdjBySaturation(status.getSaturation());
     }
@@ -79,14 +79,14 @@ public class ImageAlgo {
             } else if (mainColors[i - 1].compareTo("green") == 0) {
                 vital += (0.02 / i);
                 tempo -= (0.03 / i);
-                mordern -= (0.04 / i);
+                mordern -= (0.02 / i);
                 temp.anger -= (0.003 / i);
                 temp.neutral += (0.005 / i);
                 temp.happiness += (0.002 / i);
             } else if (mainColors[i - 1].compareTo("blue") == 0) {
                 vital -= (0.03 / i);
                 tempo -= (0.05 / i);
-                mordern -= (0.03 / i);
+                mordern -= (0.01 / i);
                 temp.neutral += (0.005 / i);
                 temp.sadness += (0.002 / i);
             } else if (mainColors[i - 1].compareTo("white") == 0) {
@@ -109,15 +109,15 @@ public class ImageAlgo {
             else if (mainColors[i - 1].compareTo("purple") == 0) {
                 vital += (0.01 / i);
                 tempo -= (0.02 / i);
-                mordern += (0.02 / i);
+                mordern += (0.03 / i);
                 temp.sadness += (0.005 / i);
                 temp.surprise += (0.002 / i);
                 temp.fear += (0.001 / i);
             } else if (mainColors[i - 1].compareTo("brown") == 0) {
                 vital -= (0.05 / i);
                 tempo += (0.03 / i);
-                mordern -= (0.03 / i);
-                temp.neutral += (0.006 / i);
+                mordern -= (0.02 / i);
+                temp.neutral += (0.004 / i);
                 temp.happiness += (0.002 / i);
             }
         }
@@ -143,16 +143,16 @@ public class ImageAlgo {
     private void AdjBySaturation(double saturation) {   //modify backgroundValue by saturation that is obtained by analizing
         double vital=0,tempo=0,mordern=0;
         
-        vital -= (1-saturation)/100;
-        tempo -= saturation/1000;
-        mordern += saturation/100;
+        vital -= (1-saturation)/10;
+        tempo -= saturation/100;
+        mordern += saturation/10;
         
         backgroundValue.add(new BGvalue(vital,tempo,mordern));
         totalValue.mulEmotionValue(saturation);
     }
 
     private void AdjByTemperature(double t) {   //modify backgroundValue by temperature that is obtained by analizing
-        double vital=0,tempo=t/10,mordern=0;
+        double vital=0,tempo=t/100,mordern=0;
         Emotion temp = new Emotion();
         
         temp.anger -= (t / 1000);
