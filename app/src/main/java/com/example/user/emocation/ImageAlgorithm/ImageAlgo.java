@@ -46,15 +46,15 @@ public class ImageAlgo {
     }
     
     
-//    public ImageStat analysis(){        //analize the img to find some information about img
-//        ImageStat imgstat = null;
-//        try {
-//            imgstat = new ImageStat(bitmap);
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//        return imgstat;
-//    }
+    public ImageStat analysis(){        //analize the img to find some information about img
+        ImageStat imgstat = null;
+        try {
+            imgstat = new ImageStat(bitmap);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return imgstat;
+    }
 
     
     private void AdjByMainColor(String[] mainColors) {  
@@ -109,7 +109,7 @@ public class ImageAlgo {
             else if (mainColors[i - 1].compareTo("purple") == 0) {
                 vital += (0.01 / i);
                 tempo -= (0.02 / i);
-                mordern += (0.03 / i);
+                mordern -= (0.03 / i);
                 temp.sadness += (0.005 / i);
                 temp.surprise += (0.002 / i);
                 temp.fear += (0.001 / i);
