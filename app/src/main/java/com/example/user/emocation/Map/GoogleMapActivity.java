@@ -109,11 +109,9 @@ public class GoogleMapActivity extends FragmentActivity implements OnMapReadyCal
     private View.OnClickListener ImageClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) { // dialog 현 위치 사진 보기
-            Toast.makeText(getApplicationContext(), "Image Click!!", Toast.LENGTH_SHORT).show();
             Intent intent = new Intent(getApplicationContext(), MarkerImageActivity.class);
 
             picture = (Picture)clickedmarker1.getTag(); // 마커의 정보를 받아온다.
-            Toast.makeText(getApplicationContext(),picture.getImage_name(),Toast.LENGTH_SHORT).show();
             intent.putExtra("title",picture); // 마커의 정보를 전달
 
             startActivity(intent);
@@ -123,12 +121,8 @@ public class GoogleMapActivity extends FragmentActivity implements OnMapReadyCal
     private View.OnClickListener LocationClickListener = new View.OnClickListener() { // dialog 주변 위치 사진 보기
         @Override
         public void onClick(View v) {
-            Toast.makeText(getApplicationContext(), "Location Click!!", Toast.LENGTH_SHORT).show();
             Intent intent = new Intent(getApplicationContext(), MarkerLocationActivity.class);
 
-
-            Toast.makeText(getApplicationContext(),picture.getImage_name(),Toast.LENGTH_SHORT).show();
-            //intent.putExtra("title2 ",picture);
 
             startActivity(intent);
         }

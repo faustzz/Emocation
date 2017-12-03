@@ -73,6 +73,7 @@ public class CameraActivity extends Activity {
     private Bitmap image_bitmap_analysis; // 분석된 사진
     private String selectedImageName;
     private Uri mCurrentPhotoPath;
+    private String backConclusion = null;
 
     //로딩창
     private Handler mHandler;
@@ -93,6 +94,8 @@ public class CameraActivity extends Activity {
             @Override
             public void onClick(View v)
             {
+                Toast.makeText(getApplicationContext(),"GPS를 키고 카메라 설정해서 '위치태그' 를 켜주세요!", Toast.LENGTH_SHORT).show();
+
                 StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder().detectFileUriExposure();
                 StrictMode.setVmPolicy(builder.build());                            // Android 7.0 이상의 버전에서는 Uri를 통해 파일 접근을 보호하고있음(보안문제). StrictMode를 통해 그 제약 무시
                 Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
@@ -199,7 +202,6 @@ public class CameraActivity extends Activity {
             @Override
             public void onSuccess(FaceAnalysis[] response) {
 
-                Toast.makeText(getApplicationContext(),"성공",Toast.LENGTH_SHORT).show();
                 FaceAnalysis[] faceAnalysises = response;
                 scores = new Scores[response.length];
                 for(int i = 0 ; i < response.length ; i++){
@@ -276,9 +278,7 @@ public class CameraActivity extends Activity {
                     " \n sadness : " + FUNCTION.excessdouble(emotion.sadness) +
                     " \n surprise : " + FUNCTION.excessdouble(emotion.surprise));
         }
-        txt_backValue.setText(" Vitality : " +(backValue.getVitality()) +
-                " \n Temperature : " +(backValue.getTemperature()) +
-                " \n Mordernity : " + (backValue.getModernity()));
+        txt_backValue.setText(backConclusion);
         isEmotion = true; // 초기화
     }
 
@@ -289,6 +289,7 @@ public class CameraActivity extends Activity {
         emotion = imageAlgo_to_analysis.emotion;
         backValue = imageAlgo_to_analysis.backgroundValue;
         totalEmotionValue = imageAlgo_to_analysis.totalValue;
+        backConclusion = imageAlgo_to_analysis.getBGConclusion();
 
         mProgressDialog.dismiss();
         show();

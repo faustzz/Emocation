@@ -21,11 +21,11 @@ public class ImageAlgo {
  It is about the (total/average) vitality, temporature, mordernity of input picture.
  The calculation result is stored in this class as 'backgroundValue' and 'totalValue'.
  */
-    TextView textView;
     Bitmap bitmap;
     public Emotion emotion;
     public BGvalue backgroundValue;
     public Emotion totalValue;
+    private String BGConclusion;
 
     public ImageAlgo(){
 
@@ -43,6 +43,7 @@ public class ImageAlgo {
         AdjByContrast(status.getContrast(status.getHisto(0)));
         AdjByTemperature(status.getTemp());
         AdjBySaturation(status.getSaturation());
+        BGConclusion = BGconclude();
     }
 
 
@@ -57,6 +58,34 @@ public class ImageAlgo {
     }
 
 
+    private String BGconclude(){
+        double threshold = 0.03;
+        double av=Math.abs(backgroundValue.getVitality()),
+                at=Math.abs(backgroundValue.getTemperature()-0.05),
+                am=Math.abs(backgroundValue.getModernity());
+
+        double max = Math.max(Math.max(av,at),am);
+        if(max < threshold){
+            return "What a Boring Picture... ";
+        }else if(max == av) {
+            if(backgroundValue.getVitality() > 0)
+                return "The picture looks VIGOROUS! Hoooo wooo!";
+            else
+                return "The picture looks CALM... ha-um";
+        }else if(max == at){
+            if(backgroundValue.getTemperature() > 0)
+                return "The picture looks WARM~ It made my heart warm too*_*";
+            else
+                return "The picture looks COLD... Is that cold out there?";
+        }else if(max == am){
+            if(backgroundValue.getModernity() > 0)
+                return "The picture looks MORDERN. By the way, have you ever been to Chicago? ";
+            else
+                return "The picture looks NATURAL! You healed me :)";
+        }
+        return "no description";
+    }
+
     private void AdjByMainColor(String[] mainColors) {
         //modify backgroundValue and total emotion value by main 3 colors that is obtained by analizing
         double vital=0,tempo=0,mordern=0;
@@ -64,21 +93,21 @@ public class ImageAlgo {
 
         for (int i = 1; i < 4; i++) {
             if (mainColors[i - 1].compareTo("red") == 0) {
-                vital += (0.04 / i);
-                tempo += (0.02 / i);
+                vital += (0.03 / i);
+                tempo += (0.01 / i);
                 mordern -= (0.02 / i);
                 temp.anger += (0.004 / i);
                 temp.fear += (0.002 / i);
                 temp.sadness -= (0.002 / i);
             } else if (mainColors[i - 1].compareTo("yellow") == 0) {
-                vital += (0.04 / i);
-                tempo += (0.04 / i);
+                vital += (0.02 / i);
+                tempo += (0.03 / i);
                 mordern -= (0.03 / i);
                 temp.happiness += (0.002 / i);
                 temp.surprise += (0.004 / i);
             } else if (mainColors[i - 1].compareTo("green") == 0) {
                 vital += (0.02 / i);
-                tempo -= (0.03 / i);
+                tempo -= (0.01 / i);
                 mordern -= (0.02 / i);
                 temp.anger -= (0.003 / i);
                 temp.neutral += (0.005 / i);
@@ -174,4 +203,6 @@ public class ImageAlgo {
     public Emotion getTotalValue() {
         return totalValue;
     }
+
+    public String getBGConclusion(){ return BGConclusion;}
 }

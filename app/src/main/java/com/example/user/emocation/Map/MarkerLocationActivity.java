@@ -54,12 +54,12 @@ public class MarkerLocationActivity extends Activity {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        txt_avgEmotion.setText(" anger : " + FUNCTION.excessdouble(avgAnger) +
-                " \n fear : " + FUNCTION.excessdouble(avgFear) +
-                " \n happiness : " + FUNCTION.excessdouble(avgHappiness) +
-                " \n neutral : " + FUNCTION.excessdouble(avgNeutral) +
-                " \n sadness : " + FUNCTION.excessdouble(avgSadness) +
-                " \n surprise : " + FUNCTION.excessdouble(avgSurprise));
+        txt_avgEmotion.setText(" anger : " + Math.round(avgAnger*1000) +
+                " \n fear : " + Math.round(avgFear*1000) +
+                " \n happiness : " + Math.round(avgHappiness*1000) +
+                " \n neutral : " + Math.round(avgNeutral*1000) +
+                " \n sadness : " + Math.round(avgSadness*1000) +
+                " \n surprise : " + Math.round(avgSurprise*1000));
 
     }
 

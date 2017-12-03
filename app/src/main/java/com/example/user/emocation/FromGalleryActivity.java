@@ -58,6 +58,7 @@ public class FromGalleryActivity extends AppCompatActivity {
     private Uri uri;
     private String selectedImageName;
     private String gps_latitude = null, gps_longtitude = null;
+    private String backConclusion = null;
 
     private Functions FUNCTION = new Functions();
 
@@ -229,7 +230,6 @@ public class FromGalleryActivity extends AppCompatActivity {
             @Override
             public void onSuccess(FaceAnalysis[] response) {
 
-                Toast.makeText(getApplicationContext(),"성공",Toast.LENGTH_SHORT).show();
                 FaceAnalysis[] faceAnalysises = response;
                 scores = new Scores[response.length];
                 for(int i = 0 ; i < response.length ; i++){
@@ -278,9 +278,7 @@ public class FromGalleryActivity extends AppCompatActivity {
                     " \n surprise : " + FUNCTION.excessdouble(emotion.surprise));
         }
 
-        txt_backValue.setText(" Vitality : " +(backValue.getVitality()) +
-                " \n Temperature : " +(backValue.getTemperature()) +
-                " \n Mordernity : " + (backValue.getModernity()));
+        txt_backValue.setText(backConclusion);
 
         isEmotion = true; // 초기화
     }
@@ -292,7 +290,7 @@ public class FromGalleryActivity extends AppCompatActivity {
         emotion = imageAlgo_to_analysis.emotion;
         backValue = imageAlgo_to_analysis.backgroundValue;
         totalEmotionValue = imageAlgo_to_analysis.totalValue;
-
+        backConclusion = imageAlgo_to_analysis.getBGConclusion();
 
         mProgressDialog.dismiss();
         show();
