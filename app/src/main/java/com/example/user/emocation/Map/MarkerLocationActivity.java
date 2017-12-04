@@ -27,16 +27,18 @@ import java.util.List;
  */
 
 public class MarkerLocationActivity extends Activity {
+
+    private FirebaseStorage storage = FirebaseStorage.getInstance();
+    private StorageReference storageRef = storage.getReference("emocation/");
+
     private double latitude, longitude;
     private double avgAnger = 0, avgFear = 0, avgHappiness = 0, avgNeutral = 0, avgSadness = 0, avgSurprise = 0;
     private int numOfLocationImages = 0;
-    private Functions FUNCTION = new Functions();
+    private LocationData locationData = GoogleMapActivity.locationData;
+    private List<Bitmap> dd = new ArrayList<>();
 
-    TextView txt_avgEmotion;
-    LocationData locationData = GoogleMapActivity.locationData;
-    List<Bitmap> dd = new ArrayList<>();
-    FirebaseStorage storage = FirebaseStorage.getInstance();
-    StorageReference storageRef = storage.getReference("emocation/");
+    private TextView txt_avgEmotion;
+
 
 
     @Override
@@ -46,14 +48,16 @@ public class MarkerLocationActivity extends Activity {
 
         Picture picture = GoogleMapActivity.picture;
 
-        latitude = convert(picture.getLatitute());
-        longitude = convert(picture.getLongitude());
+        latitude = Double.parseDouble(picture.getLatitute());
+        longitude = Double.parseDouble(picture.getLongitude());
         txt_avgEmotion = (TextView)findViewById(R.id.txt_avgEmotion);
         try {
             loadImages();
         } catch (IOException e) {
             e.printStackTrace();
         }
+        if(avgNeutral<0)
+            avgNeutral*=(-1);
         txt_avgEmotion.setText(" anger : " + Math.round(avgAnger*1000) +
                 " \n fear : " + Math.round(avgFear*1000) +
                 " \n happiness : " + Math.round(avgHappiness*1000) +
@@ -65,8 +69,8 @@ public class MarkerLocationActivity extends Activity {
 
     public void loadImages() throws IOException {
         for(int i = 0 ; i < locationData.getPicture().size() ; i++) {
-            double isINlatitude = convert(locationData.getPicture().get(i).getLatitute());
-            double isINlongitude = convert(locationData.getPicture().get(i).getLongitude());
+            double isINlatitude = Double.parseDouble(locationData.getPicture().get(i).getLatitute());
+            double isINlongitude = Double.parseDouble(locationData.getPicture().get(i).getLongitude());
             if (isIN(latitude, longitude, isINlatitude, isINlongitude)) {
                 avgAnger += locationData.getPicture().get(i).getEmotion().anger;
                 avgFear += locationData.getPicture().get(i).getEmotion().fear;
@@ -80,9 +84,10 @@ public class MarkerLocationActivity extends Activity {
                     @Override
                     public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
                         Bitmap bitmap = BitmapFactory.decodeFile(localFile.getPath());
-                        dd.add(FUNCTION.rotate(bitmap, 270));// firebase 안의 사진이 90도 회전 해서 저장된 것이 '원본'으로 인식됨. 강제로 돌려주는 수 밖에 없다. Glide로 안돌려짐
-
+                        //dd.add(FUNCTION.rotate(bitmap, 270));// firebase 안의 사진이 90도 회전 해서 저장된 것이 '원본'으로 인식됨. 강제로 돌려주는 수 밖에 없다. Glide로 안돌려짐
+                        dd.add(bitmap);
                         GridView gridview = (GridView) findViewById(R.id.gridView1); // firebase 가져올 때, 동기화 방식을 쓰는것 같음. 파일이 다 불려오기 전에 다음 코드가 실행된다. 그러므로 파일 하나 불러올 때 마다 그리드 뷰 생성
+                        //gridview.setColumnWidth(300);
                         gridview.setAdapter(new MyAdapter(getApplicationContext(), dd));
                     }
 
@@ -99,30 +104,11 @@ public class MarkerLocationActivity extends Activity {
     }
 
     public boolean isIN(double latitude, double longitude, double isINlatitude, double isINlongitude){
-        if(latitude-0.002 < isINlatitude && latitude+0.002> isINlatitude && longitude-0.0025< isINlongitude && longitude+0.0025>isINlongitude){
+        if((latitude-0.002 < isINlatitude && latitude+0.002> isINlatitude && longitude-0.0025< isINlongitude && longitude+0.0025>isINlongitude) || ((latitude == isINlatitude) && (longitude == isINlongitude))){
             return true;
         }
         else
             return false;
     }
 
-
-    public Double convert(String LongLat){ // 도 분 초로 표현 된 위도경도값을 십진법으로 표현
-        double dd=0,mm=0,ss=0;
-        String[] str = LongLat.split("/1");
-
-        for(int i=0;i<3;i++){
-            if (str[i].startsWith(",")) {
-                str[i]=str[i].replace(",","");
-            }
-        }
-
-        dd =  Double.parseDouble(str[0]);
-        mm= Double.parseDouble(str[1]);
-        ss=Double.parseDouble(str[2]);
-        double dec=dd+(mm/60)+(ss/3600);
-
-        String decimal =Double.toString(dec);
-        return dec;
-    }
 }

@@ -142,5 +142,31 @@ public class Functions { // 자주쓰는 함수들 모아논 class
 
         return emotion;
     }
+    public String showEmotionConclusion(Emotion emotion){
+        double[] maxValue = {emotion.anger, emotion.fear, emotion.happiness, emotion.neutral, emotion.sadness, emotion.surprise};
+        double max = 0, min = 0;
+
+        for(int i=0;i<maxValue.length;i++){
+            // 최대값 Max
+            if(maxValue[i] > max){
+                max = maxValue[i];
+            }
+        }
+
+        if(emotion.anger == max)
+            return "are you angry? be smile~~";
+        if(emotion.fear == max)
+            return " you look feared!";
+        if(emotion.happiness == max)
+            return "you look happy!";
+        if(emotion.neutral == max)
+            return " Your expression is neutral.";
+        if(emotion.sadness == max)
+            return "you look sad. cheer up baby~~";
+        if(emotion.surprise == max)
+            return "WOW!";
+
+        return "ERROR";
+    }
 
 }

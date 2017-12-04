@@ -29,7 +29,7 @@ import com.google.firebase.database.FirebaseDatabase;
  */
 
 public class GoogleMapActivity extends FragmentActivity implements OnMapReadyCallback{
-    static LocationData locationData = new LocationData(); // dialog 버튼 -> activity로 이동할 때, Serialble된 object들이 중복으로 안넘어가는 이슈 때문에 static으로 설정
+    static LocationData locationData; // dialog 버튼 -> activity로 이동할 때, Serialble된 object들이 중복으로 안넘어가는 이슈 때문에 static으로 설정
     static Picture picture;
     private DatabaseReference mDatabase; //DB 받아오기
     private MarkerDialog markerDialog;
@@ -46,7 +46,7 @@ public class GoogleMapActivity extends FragmentActivity implements OnMapReadyCal
         mDatabase = FirebaseDatabase.getInstance().getReference();
 
         mHandler = new Handler(); // 로딩창 핸들러 생성
-
+        locationData = new LocationData(); // 지도 열 때 마다 초기화 (static이라서 지도를 다시 열면 중복된 값들이 들어감.)
         loading();
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
@@ -65,7 +65,7 @@ public class GoogleMapActivity extends FragmentActivity implements OnMapReadyCal
                 for(DataSnapshot img_location : dataSnapshot.getChildren()){
                     Picture picture = (Picture) img_location.getValue(Picture.class); // 데이터 search, Picture 형태로 가져옴
                     locationData.setPicture(picture);
-                        LatLng position = new LatLng(convert(picture.getLatitute()), convert(picture.getLongitude())); // 위치가 같으면 마커가 중복되면서 이 전 마커가 사라짐
+                        LatLng position = new LatLng(Double.parseDouble(picture.getLatitute()), Double.parseDouble(picture.getLongitude())); // 위치가 같으면 마커가 중복되면서 이 전 마커가 사라짐
                         MarkerOptions markerOptions = new MarkerOptions();
                         markerOptions.position(position);
                         googleMap.addMarker(markerOptions).setTag(picture); // 마커 추가, 정보 숨김
@@ -123,7 +123,7 @@ public class GoogleMapActivity extends FragmentActivity implements OnMapReadyCal
         public void onClick(View v) {
             Intent intent = new Intent(getApplicationContext(), MarkerLocationActivity.class);
 
-
+            picture = (Picture)clickedmarker1.getTag(); // 마커의 정보를 받아온다.
             startActivity(intent);
         }
     };
@@ -156,22 +156,17 @@ public class GoogleMapActivity extends FragmentActivity implements OnMapReadyCal
             }
         } );
     }
-    public Double convert(String LongLat){ // 도 분 초로 표현 된 위도경도값을 십진법으로 표현
-        double dd=0,mm=0,ss=0;
+
+    public Double convert2(String LongLat){ // 도 분 초로 표현 된 위도경도값을 십진법으로 표현
         String[] str = LongLat.split("/1");
 
         for(int i=0;i<3;i++){
-            if (str[i].startsWith(",")) {
                 str[i]=str[i].replace(",","");
-            }
         }
 
-        dd =  Double.parseDouble(str[0]);
-        mm= Double.parseDouble(str[1]);
-        ss=Double.parseDouble(str[2]);
-        double dec=dd+(mm/60)+(ss/3600);
+        String str2 = str[0]+ "." + str[1] + str[2];
 
-        String decimal =Double.toString(dec);
-        return dec;
+
+        return Double.parseDouble(str2.toString());
     }
 }

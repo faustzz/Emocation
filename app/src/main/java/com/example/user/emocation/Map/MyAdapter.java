@@ -12,9 +12,8 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 
-import com.bumptech.glide.Glide;
-import com.example.user.emocation.R;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -58,8 +57,8 @@ public class MyAdapter extends BaseAdapter { // 사진들을gridview에 보여�
             imageView = (ImageView)convertView;
         else {
 
-
-
+            if(imageView !=null)
+            imageView.setMaxHeight(200); // 이미지 겹치지 않게 설정
             imageView = new ImageView(context); // GridView 뷰를 구성할 ImageView 뷰들을 정의한다.
             imageView.setAdjustViewBounds(true);
             imageView.setImageBitmap(imageIDs.get(position));

@@ -24,10 +24,10 @@ import java.io.IOException;
  */
 
 public class MarkerImageActivity extends Activity {
-    FirebaseStorage storage = FirebaseStorage.getInstance();
-    StorageReference storageRef = storage.getReference("emocation/");
-    Functions FUNCTION = new Functions();
-    Picture picture = new Picture();
+    private FirebaseStorage storage = FirebaseStorage.getInstance();
+    private StorageReference storageRef = storage.getReference("emocation/");
+    private Functions FUNCTION = new Functions();
+    private Picture picture = new Picture();
     private ImageView imageView;
     private TextView txt_avgEmotion;
 
@@ -47,13 +47,14 @@ public class MarkerImageActivity extends Activity {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        Emotion realValue = FUNCTION.showRealValue(picture.getEmotion()); // 산출값 * 1000
-        txt_avgEmotion.setText(" anger : " + Math.round(realValue.anger) +
-                " \n fear : " + Math.round(realValue.fear) +
-                " \n happiness : " + Math.round(realValue.happiness) +
-                " \n neutral : " + Math.round(realValue.neutral) +
-                " \n sadness : " + Math.round(realValue.sadness) +
-                " \n surprise : " + Math.round(realValue.surprise));
+        if(picture.getEmotion().neutral<0)
+            picture.getEmotion().neutral*=(-1);
+        txt_avgEmotion.setText(" anger : " + Math.round(picture.getEmotion().anger) +
+                " \n fear : " + Math.round(picture.getEmotion().fear) +
+                " \n happiness : " + Math.round(picture.getEmotion().happiness) +
+                " \n neutral : " + Math.round(picture.getEmotion().neutral) +
+                " \n sadness : " + Math.round(picture.getEmotion().sadness) +
+                " \n surprise : " + Math.round(picture.getEmotion().surprise));
 
     }
 
@@ -65,7 +66,8 @@ public class MarkerImageActivity extends Activity {
             public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
 
                 Bitmap bitmap = BitmapFactory.decodeFile(localFile.getPath()); // firebase 안의 사진이 90도 회전 해서 저장된 것이 '원본'으로 인식됨. 강제로 돌려주는 수 밖에 없다. Glide로 안돌려짐
-                    imageView.setImageBitmap(FUNCTION.rotate(bitmap, 270));
+                  //  imageView.setImageBitmap(FUNCTION.rotate(bitmap, 270));
+                imageView.setImageBitmap(bitmap);
 
             }
         });

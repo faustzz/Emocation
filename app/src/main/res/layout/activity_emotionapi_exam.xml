@@ -61,17 +61,21 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#7c7171"/>
         <TextView
             android:id="@+id/txt_totalValue"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Total : "
+            android:text="Total"
             android:layout_weight="2"/>
 
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:background="#000000"/>
+            android:background="#7c7171"/>
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -82,14 +86,14 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:text="감정 : "/>
+                android:text="Emotion"/>
 
             <TextView
                 android:id="@+id/txt_backValue"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:text="배경 : "/>
+                android:text="Background" />
 
         </LinearLayout>
     </LinearLayout>

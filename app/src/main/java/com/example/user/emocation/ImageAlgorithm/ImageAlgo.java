@@ -22,9 +22,9 @@ public class ImageAlgo {
  The calculation result is stored in this class as 'backgroundValue' and 'totalValue'.
  */
     Bitmap bitmap;
-    public Emotion emotion;
-    public BGvalue backgroundValue;
-    public Emotion totalValue;
+    private Emotion emotion;
+    private BGvalue backgroundValue;
+    private Emotion totalValue;
     private String BGConclusion;
 
     public ImageAlgo() {

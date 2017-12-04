@@ -22,10 +22,8 @@ import java.io.File;
 
 public class MainActivity extends AppCompatActivity {
     private ViewGroup galleryButton, cameraButton, searchButton;
-
     private Activity mainActivity = this;
 
-    private  Picture picture;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

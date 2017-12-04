@@ -50,7 +50,7 @@ public class ImageToDB {
 
     private DatabaseReference mDatabase;
 
-    Uri imageUri;
+    private Uri imageUri;
 
 
     public ImageToDB(){}

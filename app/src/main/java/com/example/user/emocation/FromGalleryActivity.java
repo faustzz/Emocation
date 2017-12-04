@@ -22,6 +22,7 @@ import android.widget.Toast;
 import com.example.user.emocation.ImageAlgorithm.BGvalue;
 import com.example.user.emocation.ImageAlgorithm.Emotion;
 import com.example.user.emocation.ImageAlgorithm.ImageAlgo;
+import com.example.user.emocation.ImageInfo.Picture;
 import com.pixelcan.emotionanalysisapi.EmotionRestClient;
 import com.pixelcan.emotionanalysisapi.ResponseCallback;
 import com.pixelcan.emotionanalysisapi.models.FaceAnalysis;
@@ -38,6 +39,9 @@ import java.io.IOException;
  */
 
 public class FromGalleryActivity extends AppCompatActivity {
+
+
+
 
     //Layout
     private TextView txt_totalValue, txt_emotionValue, txt_backValue;
@@ -106,7 +110,6 @@ public class FromGalleryActivity extends AppCompatActivity {
                 selectedImageName = getImageNameToUri(data.getData());
                 //이미지 데이터를 비트맵으로 받아온다.
                 Bitmap image_bitmap = null;
-
                 try {
                     image_bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), data.getData());
                 } catch (IOException e) {
@@ -263,6 +266,8 @@ public class FromGalleryActivity extends AppCompatActivity {
     public void show(){
         if(isEmotion) {
             Emotion realValue = FUNCTION.showRealValue(totalEmotionValue); // 산출값 * 1000
+            if(realValue.neutral<0)
+                realValue.neutral*=(-1);
             txt_totalValue.setText(" anger : " + Math.round(realValue.anger) +
                     " \n fear : " + Math.round(realValue.fear) +
                     " \n happiness : " + Math.round(realValue.happiness) +
@@ -270,12 +275,7 @@ public class FromGalleryActivity extends AppCompatActivity {
                     " \n sadness : " + Math.round(realValue.sadness) +
                     " \n surprise : " + Math.round(realValue.surprise));
 
-            txt_emotionValue.setText(" anger : " + FUNCTION.excessdouble(emotion.anger) +
-                    " \n fear : " + FUNCTION.excessdouble(emotion.fear) +
-                    " \n happiness : " + FUNCTION.excessdouble(emotion.happiness) +
-                    " \n neutral : " + FUNCTION.excessdouble(emotion.neutral) +
-                    " \n sadness : " + FUNCTION.excessdouble(emotion.sadness) +
-                    " \n surprise : " + FUNCTION.excessdouble(emotion.surprise));
+            txt_emotionValue.setText(FUNCTION.showEmotionConclusion(emotion));
         }
 
         txt_backValue.setText(backConclusion);
@@ -287,9 +287,9 @@ public class FromGalleryActivity extends AppCompatActivity {
 
         ImageAlgo imageAlgo_to_analysis = new ImageAlgo(image_bitmap, emotionValue);
 
-        emotion = imageAlgo_to_analysis.emotion;
-        backValue = imageAlgo_to_analysis.backgroundValue;
-        totalEmotionValue = imageAlgo_to_analysis.totalValue;
+        emotion = imageAlgo_to_analysis.getEmotion();
+        backValue = imageAlgo_to_analysis.getBackgroundValue();
+        totalEmotionValue = imageAlgo_to_analysis.getTotalValue();
         backConclusion = imageAlgo_to_analysis.getBGConclusion();
 
         mProgressDialog.dismiss();

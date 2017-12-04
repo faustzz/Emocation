@@ -51,8 +51,6 @@ import java.util.List;
 
 public class CameraActivity extends Activity {
 
-    // 안드로이드 내부 DB사용을 위한 선언 (간단한 값이라서 내부DB 사용)
-    SharedPreferences mPref;
     //Layout
     private ImageButton capture = null;
     private ImageView iv = null, logo;
@@ -114,7 +112,7 @@ public class CameraActivity extends Activity {
                     Toast.makeText(getApplicationContext(),"위치정보가 없어 서버저장에 실패했습니다.",Toast.LENGTH_SHORT).show();
                 }
                 else{
-                    Picture picture = new Picture(gps_latitude, gps_longtitude, FUNCTION.subString(selectedImageName, "."), emotion);
+                    Picture picture = new Picture(convert(gps_latitude), convert(gps_longtitude), FUNCTION.subString(selectedImageName, "."), totalEmotionValue);
                     ImageToDB imageToDB = new ImageToDB(selectedImageUri, picture, FUNCTION.subString(selectedImageName, "."));
                     imageToDB.saveToFirebase();
                 }
@@ -265,18 +263,15 @@ public class CameraActivity extends Activity {
     public void show(){
         if(isEmotion) {
             Emotion realValue = FUNCTION.showRealValue(totalEmotionValue); // 산출값 * 1000
+            if(realValue.neutral<0)
+                realValue.neutral*=(-1);
             txt_totalValue.setText(" anger : " + Math.round(realValue.anger) +
                     " \n fear : " + Math.round(realValue.fear) +
                     " \n happiness : " + Math.round(realValue.happiness) +
                     " \n neutral : " + Math.round(realValue.neutral) +
                     " \n sadness : " + Math.round(realValue.sadness) +
                     " \n surprise : " + Math.round(realValue.surprise));
-            txt_emotionValue.setText(" anger : " + FUNCTION.excessdouble(emotion.anger) +
-                    " \n fear : " + FUNCTION.excessdouble(emotion.fear) +
-                    " \n happiness : " + FUNCTION.excessdouble(emotion.happiness) +
-                    " \n neutral : " + FUNCTION.excessdouble(emotion.neutral) +
-                    " \n sadness : " + FUNCTION.excessdouble(emotion.sadness) +
-                    " \n surprise : " + FUNCTION.excessdouble(emotion.surprise));
+            txt_emotionValue.setText(FUNCTION.showEmotionConclusion(emotion));
         }
         txt_backValue.setText(backConclusion);
         isEmotion = true; // 초기화
@@ -286,9 +281,9 @@ public class CameraActivity extends Activity {
 
         ImageAlgo imageAlgo_to_analysis = new ImageAlgo(image_bitmap, emotionValue);
 
-        emotion = imageAlgo_to_analysis.emotion;
-        backValue = imageAlgo_to_analysis.backgroundValue;
-        totalEmotionValue = imageAlgo_to_analysis.totalValue;
+        emotion = imageAlgo_to_analysis.getEmotion();
+        backValue = imageAlgo_to_analysis.getBackgroundValue();
+        totalEmotionValue = imageAlgo_to_analysis.getTotalValue();
         backConclusion = imageAlgo_to_analysis.getBGConclusion();
 
         mProgressDialog.dismiss();
@@ -304,6 +299,25 @@ public class CameraActivity extends Activity {
         txt_totalValue = (TextView)findViewById(R.id.txt_totalValue);
         txt_emotionValue = (TextView)findViewById(R.id.txt_emotionValue);
         txt_backValue = (TextView)findViewById(R.id.txt_backValue);
+    }
+
+    public String convert(String LongLat){ // 도 분 초로 표현 된 위도경도값을 십진법으로 표현
+        double dd=0,mm=0,ss=0;
+        String[] str = LongLat.split("/1");
+
+        for(int i=0;i<3;i++){
+            if (str[i].startsWith(",")) {
+                str[i]=str[i].replace(",","");
+            }
+        }
+
+        dd =  Double.parseDouble(str[0]);
+        mm= Double.parseDouble(str[1]);
+        ss=Double.parseDouble(str[2]);
+        double dec=dd+(mm/60)+(ss/3600);
+
+        String decimal =Double.toString(dec);
+        return decimal;
     }
 
 }
